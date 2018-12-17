@@ -9,6 +9,7 @@
 #include <set>
 #include <ctime>
 #include <random>
+#include <algorithm>
 
 #include <socialnet-1.h>
 #include <languagemodel-1.h>
@@ -281,6 +282,48 @@ static void add_to_cache (string host, string user, string result)
 }
 
 
+static string to_lower (string in)
+{
+	string out;
+	for (auto c: in) {
+		if ('A' <= c && c <= 'Z') {
+			out.push_back (c - 'A' + 'a');
+		} else {
+			out.push_back (c);
+		}
+	}
+	return out;
+}
+
+
+static double get_affirmative_action_rate (string bio)
+{
+	set <string> words {
+		string {"♀"},
+		string {"⚦"},
+		string {"⚧"},
+		string {"⚪"},
+		string {"⚨"},
+		string {"⚩"},
+		string {"⚲"},
+		string {"female"},
+		string {"she/her"},
+		string {"transgender"},
+		string {"mtf"},
+		string {"ftm"},
+		string {"agender"},
+		string {"queer"},
+		string {"questioning"},
+	};
+
+	bool hit = any_of (words.begin (), words.end (), [bio] (auto x) {
+		return to_lower (bio).find (x) != string::npos;
+	});
+
+	return hit? 1.5: 1.0;
+}
+
+
 int main (int argc, char **argv)
 {
 	if (argc < 3) {
@@ -382,11 +425,23 @@ int main (int argc, char **argv)
 		}
 		cerr << endl;
 
-		cerr << "stable_sort" << endl;
-		stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
-
 		cerr << "read_profiles" << endl;
 		users_to_profile = read_profiles ();
+
+		cerr << "affirmative_action" << endl;
+		for (auto &speaker_and_similarity: speakers_and_similarity) {
+			string host_name = speaker_and_similarity.host;
+			string user_name = speaker_and_similarity.user;
+			User user {host_name, user_name};
+			if (users_to_profile.find (user) != users_to_profile.end ()) {
+				auto profile = users_to_profile.at (user);
+				double affirmative_action_rate = get_affirmative_action_rate (profile.bio);
+				speaker_and_similarity.similarity *= affirmative_action_rate;
+			}
+		}		
+
+		cerr << "stable_sort" << endl;
+		stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
 	} else {
 		/* toots.size () < 4 */
 		
