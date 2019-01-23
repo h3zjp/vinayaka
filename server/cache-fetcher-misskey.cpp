@@ -16,7 +16,6 @@ using namespace std;
 
 static string get_filtered_api (
 	string in,
-	set <socialnet::HostNameAndUserName> friends,
 	string listener_host,
 	string listener_user,
 	unsigned int limit,
@@ -43,7 +42,7 @@ static string get_filtered_api (
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following_bool = socialnet::following (host, user, friends);
+		bool following_bool = user_object.at (string {"following"}).get <bool> ();
 		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
@@ -103,23 +102,21 @@ int main (int argc, char *argv [])
 	string result = fetch_cache (host, user, hit);
 	if (hit) {
 		auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
-		auto friends = socialnet_user->get_friends_no_exception ();
 		cout << "Access-Control-Allow-Origin: *" << endl;
 		cout << "Content-Type: application/json" << endl << endl;
-		cout << get_filtered_api (result, friends, host, user, limit, offset);
+		cout << get_filtered_api (result, host, user, limit, offset);
 	} else {
 		pid_t pid = fork ();
 		if (pid == 0) {
 			execv ("/usr/local/bin/vinayaka-user-match-impl", argv);
 		} else {
 			auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
-			auto friends = socialnet_user->get_friends_no_exception ();
 			int status;
 			waitpid (pid, &status, 0);
 			string result_2 = fetch_cache (host, user, hit);
 			cout << "Access-Control-Allow-Origin: *" << endl;
 			cout << "Content-Type: application/json" << endl << endl;
-			cout << get_filtered_api (result_2, friends, host, user, limit, offset);
+			cout << get_filtered_api (result_2, host, user, limit, offset);
 		}
 	}
 }
