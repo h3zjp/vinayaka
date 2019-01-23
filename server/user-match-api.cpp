@@ -228,7 +228,7 @@ static string format_result
 		out << "\"blacklisted\":" << (blacklisted? "true": "false") << ",";
 
 		bool following_bool = socialnet::following (speaker.host, speaker.user, friends);
-		out << "\"following:\":" << (following_bool? "true": "false") << ",";
+		out << "\"following\":" << (following_bool? "true": "false") << ",";
 
 		if (users_to_profile.find (User {speaker.host, speaker.user}) == users_to_profile.end ()) {
 			out
