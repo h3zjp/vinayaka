@@ -303,6 +303,10 @@ map <User, Profile> read_profiles ()
 		if (user_object.find (string {"implementation"}) != user_object.end ()) {
 			socialnet::decode (user_object.at (string {"implementation"}).get <string> (), implementation);
 		}
+		string activitypub_id = user;
+		if (user_object.find (string {"activitypub_id"}) != user_object.end ()) {
+			activitypub_id = user_object.at (string {"activitypub_id"}).get <string> ();
+		}
 		
 		Profile profile;
 		profile.screen_name = screen_name;
@@ -311,6 +315,7 @@ map <User, Profile> read_profiles ()
 		profile.type = type;
 		profile.url = url;
 		profile.implementation = implementation;
+		profile.activitypub_id = activitypub_id;
 		users_to_profile.insert (pair <User, Profile> {User {host, user}, profile});
 	}
 	return users_to_profile;

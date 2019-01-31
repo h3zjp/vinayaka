@@ -37,7 +37,8 @@ static string get_filtered_api (string in, set <socialnet::HostNameAndUserName> 
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following_bool = socialnet::following (host, user, friends);
+		string activitypub_id = user_object.at (string {"activitypub_id"}).get <string> ();
+		bool following_bool = socialnet::following (host, user, activitypub_id, friends);
 		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});

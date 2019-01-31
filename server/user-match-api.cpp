@@ -227,8 +227,7 @@ static string format_result
 			|| (blacklisted_users.find (User {speaker.host, string {"*"}}) != blacklisted_users.end ());
 		out << "\"blacklisted\":" << (blacklisted? "true": "false") << ",";
 
-		bool following_bool = socialnet::following (speaker.host, speaker.user, friends);
-		out << "\"following\":" << (following_bool? "true": "false") << ",";
+		string activitypub_id = speaker.user;
 
 		if (users_to_profile.find (User {speaker.host, speaker.user}) == users_to_profile.end ()) {
 			out
@@ -240,6 +239,7 @@ static string format_result
 				<< "\"implementation\":\"unknown\",";
 		} else {
 			Profile profile = users_to_profile.at (User {speaker.host, speaker.user});
+			activitypub_id = profile.activitypub_id;
 			out
 				<< "\"screen_name\":\"" << escape_json (profile.screen_name) << "\","
 				<< "\"bio\":\"" << escape_json (profile.bio) << "\",";
@@ -252,6 +252,9 @@ static string format_result
 			out << "\"url\":\"" << escape_json (profile.url) << "\",";
 			out << "\"implementation\":\"" << socialnet::format (profile.implementation) << "\",";
 		}
+
+		bool following_bool = socialnet::following (speaker.host, speaker.user, activitypub_id, friends);
+		out << "\"following\":" << (following_bool? "true": "false") << ",";
 
 		out << "\"intersection\":[";
 		for (unsigned int cn_intersection = 0; cn_intersection < intersection_vector.size (); cn_intersection ++) {

@@ -30,6 +30,7 @@ public:
 	string type;
 	string url;
 	socialnet::eImplementation implementation;
+	string activitypub_id;
 public:
 	UserAndFirstToot () {};
 	UserAndFirstToot
@@ -38,7 +39,8 @@ public:
 		user (a_user),
 		first_toot_timestamp (a_first_toot_timestamp),
 		blacklisted (false),
-		implementation (socialnet::eImplementation::UNKNOWN)
+		implementation (socialnet::eImplementation::UNKNOWN),
+		activitypub_id (a_user)
 		{};
 };
 
@@ -215,6 +217,7 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 		string type;
 		string url = string {"https://"} + host + string {"/users/"} + user;
 		auto implementation = socialnet::eImplementation::UNKNOWN;
+		string activitypub_id = user;
 
 		if (peaceful_age_count < 16) {
 			try {
@@ -239,6 +242,7 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 		user_and_first_toot.type = type;
 		user_and_first_toot.url = url;
 		user_and_first_toot.implementation = implementation;
+		user_and_first_toot.activitypub_id = activitypub_id;
 	}
 }
 
@@ -292,7 +296,8 @@ static void cache_sorted_result (set <string> hosts)
 			out << "\"avatar\":\"\",";
 		}
 		out << "\"type\":\"" << escape_json (user.type) << "\",";
-		out << "\"implementation\":\"" << socialnet::format (user.implementation) << "\"";
+		out << "\"implementation\":\"" << socialnet::format (user.implementation) << "\",";
+		out << "\"activitypub_id\":\"" << escape_json (user.activitypub_id) << "\"";
 		out
 			<< "}";
 	}
