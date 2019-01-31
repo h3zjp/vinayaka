@@ -51,7 +51,8 @@ static void write_to_storage (vector <pair <User, Profile>> users_and_profiles, 
 			<< "\"avatar\":\"" << escape_json (profile.avatar) << "\","
 			<< "\"type\":\"" << escape_json (profile.type) << "\","
 			<< "\"url\":\"" << escape_json (profile.url) << "\","
-			<< "\"implementation\":\"" << socialnet::format (profile.implementation) << "\""
+			<< "\"implementation\":\"" << socialnet::format (profile.implementation) << "\","
+			<< "\"activitypub_id\":\"" << escape_json (profile.activitypub_id) << "\""
 			<< "}";
 	}
 	out << "]";
@@ -79,6 +80,7 @@ int main (int argc, char **argv)
 		string type;
 		string url = string {"https://"} + user.host + string {"/users/"} + user.user;
 		auto implementation = socialnet::eImplementation::UNKNOWN;
+		string activitypub_id = user.user;
 		
 		if (peaceful_age_count < 16) {
 			cerr << cn << " " << user.host << " " << user.user << endl;
@@ -90,7 +92,7 @@ int main (int argc, char **argv)
 				}
 				url = socialnet_user->url ();
 				implementation = socialnet_user->host->implementation ();
-				socialnet_user->get_profile (screen_name, bio, avatar, type);
+				socialnet_user->get_profile (screen_name, bio, avatar, type, activitypub_id);
 			} catch (socialnet::PeacefulAgeException e) {
 				peaceful_age_count ++;
 			} catch (socialnet::ExceptionWithLineNumber e) {
@@ -107,6 +109,7 @@ int main (int argc, char **argv)
 		profile.type = type;
 		profile.url = url;
 		profile.implementation = implementation;
+		profile.activitypub_id = activitypub_id;
 		users_and_profiles.push_back (pair <User, Profile> {user, profile});
 	};
 	string filename {"/var/lib/vinayaka/user-profiles.json"};

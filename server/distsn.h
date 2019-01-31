@@ -92,6 +92,7 @@ public:
 	std::string type;
 	std::string url;
 	socialnet::eImplementation implementation;
+	std::string activitypub_id;
 };
 
 
