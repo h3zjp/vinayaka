@@ -127,6 +127,7 @@ std::string escape_utf8_fragment (std::string in);
 
 std::map <User, Profile> read_profiles ();
 bool safe_url (std::string url);
+void add_to_cache (std::string host, std::string user, std::string result);
 std::string fetch_cache (std::string a_host, std::string a_user, bool & a_hit);
 
 std::set <User> get_optouted_users ();

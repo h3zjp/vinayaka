@@ -277,19 +277,6 @@ static string format_result
 }
 
 
-static void add_to_cache (string host, string user, string result)
-{
-	string file_name {"/var/lib/vinayaka/match-cache.csv"};
-	FileLock lock {file_name};
-	ofstream out {file_name.c_str (), std::ofstream::out | std::ofstream::app};
-	time_t now = time (nullptr);
-	out << "\"" << escape_csv (host) << "\",";
-	out << "\"" << escape_csv (user) << "\",";
-	out << "\"" << escape_csv (result) << "\",";
-	out << "\"" << now << "\"" << endl;
-}
-
-
 static string to_lower (string in)
 {
 	string out;

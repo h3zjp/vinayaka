@@ -2,8 +2,11 @@
 #include <sstream>
 #include <curl/curl.h>
 #include <cassert>
+#include <fstream>
 
 #include <languagemodel-1.h>
+
+#include "minimal_crypto.h"
 
 #include "distsn.h"
 
@@ -349,37 +352,40 @@ bool safe_url (string url)
 }
 
 
+static string user_hash (string a_host, string a_user)
+{
+	return minimal_crypto::hash (a_host + string {"/user/"} + a_user);
+}
+
+
+void add_to_cache (string a_host, string a_user, string result)
+{
+	string file_name = string {"/var/lib/vinayaka/match-cache.d/"} + user_hash (a_host, a_user) + string {".json"};
+	ofstream out {file_name};
+	out << result;
+}
+
+
 string fetch_cache (string a_host, string a_user, bool & a_hit)
 {
 	a_hit = false;
 
-	string file_name {"/var/lib/vinayaka/match-cache.csv"};
-	FileLock lock {file_name, LOCK_SH};
+	string file_name = string {"/var/lib/vinayaka/match-cache.d/"} + user_hash (a_host, a_user) + string {".json"};
 
-	vector <vector <string>> table;
 	FILE * in = fopen (file_name.c_str (), "rb");
 	if (in != nullptr) {
-		table = parse_csv (in);
-		fclose (in);
-	}
-
-	time_t now = time (nullptr);
-
-	for (auto row_iter = table.rbegin (); row_iter != table.rend (); row_iter ++) {
-		auto row {* row_iter};
-		if (3 < row.size ()
-			&& row.at (0) == a_host
-			&& row.at (1) == a_user)
-		{
-			stringstream timestamp_sstream {row.at (3)};
-			time_t timestamp_time_t;
-			timestamp_sstream >> timestamp_time_t;
-			if (difftime (now, timestamp_time_t) < 60 * 60) {
-				string result {row.at (2)};
-				a_hit = true;
-				return result;
+		string s;
+		for (; ; ) {
+		char b [1024];
+			auto fgets_return = fgets (b, 1024, in);
+			if (fgets_return == nullptr) {
+				break;
 			}
+			s += string {b};
 		}
+		fclose (in);
+		a_hit = true;
+		return s;
 	}
 
 	return string {};

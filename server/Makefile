@@ -86,7 +86,7 @@ impls = $(impl_binaries) $(impl_scripts)
 
 etcs = blacklisted_users.csv
 
-loading_libraries = -lsocialnet-1 -lcurl -ltinyxml2 -llanguagemodel-1
+loading_libraries = -lsocialnet-1 -lcurl -ltinyxml2 -lcrypto++ -llanguagemodel-1
 
 .SUFFIXES: .cpp .o
 
@@ -163,14 +163,14 @@ initialize:
 	$(MKDIR) -p /var/lib/vinayaka/raw-toots
 	$(MKDIR) -p /var/lib/vinayaka/model
 	$(MKDIR) -p /var/lib/vinayaka/user-first-toot
-	$(TOUCH) /var/lib/vinayaka/match-cache.csv
+	$(MKDIR) /var/lib/vinayaka/match-cache.d
 	$(TOUCH) /var/lib/vinayaka/model/concrete-user-words.csv
 	$(TOUCH) /var/lib/vinayaka/model/popularity.csv
 	$(TOUCH) /var/lib/vinayaka/users-new-cache.json
 	$(CHMOD) -R a+rwx /var/lib/vinayaka
 
 refresh-cache:
-	-$(RM) /var/lib/vinayaka/match-cache.csv
+	-$(RM) /var/lib/vinayaka/match-cache.d/*
 
 refresh-all: refresh-cache
 	-$(RM) /var/lib/vinayaka/*.json
