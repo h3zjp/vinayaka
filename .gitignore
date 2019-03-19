@@ -35,7 +35,6 @@
 vinayaka-user-match-impl
 vinayaka-user-avatar-cron
 vinayaka-user-match-cache-fetcher
-vinayaka-user-match-cache-fetcher-simple
 vinayaka-user-match-cache-fetcher-osa
 vinayaka-report-cache-api.cgi
 vinayaka-user-speed-cron
