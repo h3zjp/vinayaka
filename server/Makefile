@@ -25,7 +25,6 @@ objects = \
 	cache-fetcher-osa.o \
 	cache-fetcher-filtered.o \
 	cache-fetcher-suggestions.o \
-	clear-cache-impl.o \
 	distsn.o \
 	report-cache.o \
 	sort-user-speed.o \
@@ -60,8 +59,7 @@ cron_binaries = \
 impl_binaries = \
 	vinayaka-user-match-impl \
 	vinayaka-user-match-cache-fetcher \
-	vinayaka-user-match-cache-fetcher-osa \
-	vinayaka-clear-cache-impl
+	vinayaka-user-match-cache-fetcher-osa
 
 impl_scripts = \
 	vinayaka-user-match-resource-guard
@@ -118,9 +116,6 @@ vinayaka-user-speed-cron: distsn.o user-speed-cron.o
 
 vinayaka-user-speed-api.cgi: distsn.o sort-user-speed.o user-speed-api.o
 	$(CXX) distsn.o sort-user-speed.o user-speed-api.o $(loading_libraries) $(CFLAGS) -o $@
-
-vinayaka-clear-cache-impl: distsn.o clear-cache-impl.o
-	$(CXX) distsn.o clear-cache-impl.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-store-raw-toots-cron: distsn.o sort-user-speed.o store-raw-toots.o
 	$(CXX) distsn.o sort-user-speed.o store-raw-toots.o $(loading_libraries) $(CFLAGS) -o $@

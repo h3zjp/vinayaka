@@ -40,7 +40,6 @@ vinayaka-user-match-cache-fetcher-osa
 vinayaka-report-cache-api.cgi
 vinayaka-user-speed-cron
 vinayaka-user-speed-api.cgi
-vinayaka-clear-cache-impl
 vinayaka-collect-raw-toots-cron
 vinayaka-store-raw-toots-cron
 vinayaka-user-new-cron
