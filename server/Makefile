@@ -26,7 +26,6 @@ objects = \
 	cache-fetcher-filtered.o \
 	cache-fetcher-suggestions.o \
 	distsn.o \
-	report-cache.o \
 	sort-user-speed.o \
 	user-avatar-cron.o \
 	user-match-api.o \
