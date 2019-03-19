@@ -48,7 +48,7 @@ static void write_to_storage (vector <pair <User, vector <string>>> users_and_to
 }
 
 
-static const unsigned int history_variations = 24;
+static const unsigned int history_variations = 64;
 
 	
 static void get_and_save_toots (vector <User> users)

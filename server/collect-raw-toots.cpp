@@ -19,7 +19,7 @@
 using namespace std;
 
 
-static const unsigned int history_variations = 24;
+static const unsigned int history_variations = 64;
 
 	
 static vector <User> get_users (unsigned int size)
