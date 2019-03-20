@@ -93,6 +93,7 @@ public:
 	std::string url;
 	socialnet::eImplementation implementation;
 	std::string activitypub_id;
+	unsigned int number_of_followers;
 };
 
 

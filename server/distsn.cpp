@@ -310,6 +310,12 @@ map <User, Profile> read_profiles ()
 		if (user_object.find (string {"activitypub_id"}) != user_object.end ()) {
 			activitypub_id = user_object.at (string {"activitypub_id"}).get <string> ();
 		}
+		unsigned int number_of_followers = 0;
+		if (user_object.find (string {"number_of_followers"}) != user_object.end ()) {
+			double number_of_followers_double = user_object.at (string {"number_of_followers"}).get <double> ();
+			number_of_followers = static_cast <unsigned int> (number_of_followers_double);
+		}
+		
 		
 		Profile profile;
 		profile.screen_name = screen_name;
@@ -319,6 +325,7 @@ map <User, Profile> read_profiles ()
 		profile.url = url;
 		profile.implementation = implementation;
 		profile.activitypub_id = activitypub_id;
+		profile.number_of_followers = number_of_followers;
 		users_to_profile.insert (pair <User, Profile> {User {host, user}, profile});
 	}
 	return users_to_profile;

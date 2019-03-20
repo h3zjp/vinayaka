@@ -155,7 +155,8 @@ static map <string, unsigned int> get_words_to_popularity (map <User, set <strin
 static void write_concrete_user_words
 	(map <User, set <string>> users_to_toots,
 	map <string, unsigned int> words_to_popularity,
-	unsigned int minimum_popularity)
+	unsigned int minimum_popularity,
+	map <User, Profile> profiles)
 {
 	stringstream out;
 	unsigned int cn = 0;
@@ -167,15 +168,23 @@ static void write_concrete_user_words
 		
 		User user = user_to_toots.first;
 		set <string> toots = user_to_toots.second;
-		vector <string> toots_vector {toots.begin (), toots.end ()};
-		const unsigned int vocabulary_size {3200};
-		vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size, words_to_popularity, minimum_popularity);
-		set <string> all;
-		all.insert (model_6.begin (), model_6.end ());
-		for (auto abstract_word: all) {
-			out << "\"" << escape_csv (user.host) << "\",";
-			out << "\"" << escape_csv (user.user) << "\",";
-			out << "\"" << escape_csv (abstract_word) << "\"" << endl;
+
+		unsigned int number_of_followers = 0;
+		if (profiles.find (user) != profiles.end ()) {
+			number_of_followers = profiles.at (user).number_of_followers;
+		}
+
+		if (number_of_followers < 500) {
+			vector <string> toots_vector {toots.begin (), toots.end ()};
+			const unsigned int vocabulary_size {3200};
+			vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size, words_to_popularity, minimum_popularity);
+			set <string> all;
+			all.insert (model_6.begin (), model_6.end ());
+			for (auto abstract_word: all) {
+				out << "\"" << escape_csv (user.host) << "\",";
+				out << "\"" << escape_csv (user.user) << "\",";
+				out << "\"" << escape_csv (abstract_word) << "\"" << endl;
+			}
 		}
 	}
 	cerr << endl;
@@ -235,8 +244,12 @@ int main (int argc, char **argv)
 	cerr << "compress_words_to_popularity" << endl;
 	map <string, unsigned int> words_to_popularity = compress_words_to_popularity (raw_words_to_popularity, minimum_popularity);
 
+
+	cerr << "read_profiles" << endl;
+	map <User, Profile> profiles = read_profiles ();
+
 	cerr << "write_concrete_user_words" << endl;
-	write_concrete_user_words (users_to_toots, words_to_popularity, minimum_popularity);
+	write_concrete_user_words (users_to_toots, words_to_popularity, minimum_popularity, profiles);
 
 	cerr << "write_popularity" << endl;
 	write_popularity (words_to_popularity);
