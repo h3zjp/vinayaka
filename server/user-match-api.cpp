@@ -385,7 +385,7 @@ int main (int argc, char **argv)
 	if (4 <= toots.size ()) {
 		/* Sorry to this long long scope. */
 	
-		const unsigned int vocabulary_size {1600};
+		const unsigned int vocabulary_size {3200};
 		vector <ModelTopology> models = {
 			ModelTopology {6, vocabulary_size},
 		};

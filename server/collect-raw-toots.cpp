@@ -168,7 +168,7 @@ static void write_concrete_user_words
 		User user = user_to_toots.first;
 		set <string> toots = user_to_toots.second;
 		vector <string> toots_vector {toots.begin (), toots.end ()};
-		const unsigned int vocabulary_size {1600};
+		const unsigned int vocabulary_size {3200};
 		vector <string> model_6 = get_words_from_toots (toots_vector, 6, vocabulary_size, words_to_popularity, minimum_popularity);
 		set <string> all;
 		all.insert (model_6.begin (), model_6.end ());
