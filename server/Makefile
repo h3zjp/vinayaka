@@ -81,7 +81,7 @@ crons = $(cron_binaries) $(cron_scripts)
 
 impls = $(impl_binaries) $(impl_scripts)
 
-etcs = blacklisted_users.csv
+etcs = 
 
 loading_libraries = -lsocialnet-1 -lcurl -ltinyxml2 -lcrypto++ -llanguagemodel-1
 
@@ -142,10 +142,9 @@ install: $(cgis)
 	$(INSTALL_PROGRAM) $(crons) --target-directory=$(bindir)
 	$(INSTALL_PROGRAM) $(impls) --target-directory=$(bindir)
 	$(MKDIR) -p $(etcdir)
-	$(INSTALL_DATA) $(etcs) --target-directory=$(etcdir)
+	$(TOUCH) $(etcdir)/blacklisted_users.csv
 
 uninstall:
-	-$(RM) $(addprefix $(etcdir)/,$(etcs))
 	-$(RMDIR) $(etcdir)
 	-$(RM) $(addprefix $(bindir)/,$(impls))
 	-$(RM) $(addprefix $(bindir)/,$(crons))
