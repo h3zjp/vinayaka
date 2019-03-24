@@ -49,10 +49,11 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (フル)
 ## Install
 
 Depends on: https://gitlab.com/distsn/libsocialnet  
-Depends on: https://gitlab.com/distsn/liblanguagemodel
+Depends on: https://gitlab.com/distsn/liblanguagemodel  
+Optional dependency: https://gitlab.com/distsn/vinayaka-blacklist
 
     $ sudo apt install build-essential libcurl4-openssl-dev libtinyxml2-dev libcrypto++-dev apache2
-    $make clean
+    $ make clean
     $ make
     $ sudo make install
     $ sudo make initialize
