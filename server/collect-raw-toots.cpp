@@ -219,7 +219,7 @@ static map <string, unsigned int> compress_words_to_popularity
 int main (int argc, char **argv)
 {
 	cerr << "get_union_of_history" << endl;
-	map <User, set <string>> users_to_toots = get_union_of_history (5000);
+	map <User, set <string>> users_to_toots = get_union_of_history (15000);
 
 	cerr << "save_users_to_toots" << endl;
 	save_users_to_toots (users_to_toots);
