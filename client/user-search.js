@@ -113,8 +113,8 @@ for (cn = 0; cn < users.length; cn ++) {
 	var user;
 	user = users [cn];
 	var user_html = '';
-	user_html += '<p>'
 	if (! user.blacklisted) {
+		user_html += '<p>'
 		user_html +=
 			'<a href="' +
 			escapeAttribute (user.url) +
@@ -133,11 +133,11 @@ for (cn = 0; cn < users.length; cn ++) {
 			'" target="vinayaka-external-user-profile" class="headline">' +
 			escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 			'</a>'
+		user_html +=
+			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
+			'<br>' + escapeHtml (user.text) +
+			'</p>'
 	}
-	user_html +=
-		(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
-		'<br>' + escapeHtml (user.text) +
-		'</p>'
 	html += user_html;
 }
 placeholder.innerHTML = html;
