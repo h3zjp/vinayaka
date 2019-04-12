@@ -118,7 +118,7 @@ for (cn = 0; cn < users.length; cn ++) {
 		user_html +=
 			'<a href="' +
 			escapeAttribute (user.url) +
-			'" target="vinayaka-external-user-profile">' +
+			'" target="_blank">' +
 			'<img class="avatar" src="';
 		if (user.avatar && 0 < user.avatar.length) {
 			user_html += mediaProxy (user.avatar)
@@ -130,7 +130,7 @@ for (cn = 0; cn < users.length; cn ++) {
 			'</a>' +
 			'<a href="' +
 			escapeAttribute (user.url) +
-			'" target="vinayaka-external-user-profile" class="headline">' +
+			'" target="_blank" class="headline">' +
 			escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 			'</a>'
 		user_html +=
