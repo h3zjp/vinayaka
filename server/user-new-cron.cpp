@@ -309,17 +309,10 @@ int main (int argc, char **argv)
 
 	cache_sorted_result (host_names);
 
-	unsigned int peaceful_age_count = 0;
-
 	for (auto host: hosts) {
 		cerr << host->host_name << endl;
 		try {
 			for_host (host);
-		} catch (socialnet::PeacefulAgeException e) {
-			peaceful_age_count ++;
-			if (16 < peaceful_age_count) {
-				break;
-			}
 		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << "Error " << e.line << endl;
 		}
