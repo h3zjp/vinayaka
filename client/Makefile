@@ -18,15 +18,12 @@ www_files = \
 	index.html \
 	fake-mastodon.css \
 	kasaikuminkan.jpg \
-	google214b9ca3f27d115d.html \
 	user-match.js \
 	missing.svg \
 	user-speed.html \
 	user-speed.js \
-	ja.html \
 	missing.png \
 	blacklisted.png \
-	user-speed-ja.html \
 	user-new.html \
 	user-new.js \
 	user-search.html \
