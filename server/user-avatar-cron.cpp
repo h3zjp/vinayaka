@@ -67,8 +67,7 @@ int main (int argc, char **argv)
 
 	vector <pair <User, Profile>> users_and_profiles;
 
-	socialnet::Hosts hosts;
-	hosts.initialize ();
+	auto http = make_shared <socialnet::Http> ();
 	
 	unsigned int peaceful_age_count = 0;
 
@@ -88,7 +87,7 @@ int main (int argc, char **argv)
 			cerr << cn << " " << user.host << " " << user.user << endl;
 
 			try {
-				auto socialnet_user = hosts.make_user (user.host, user.user);
+				auto socialnet_user = socialnet::make_user (user.host, user.user, http);
 				if (! socialnet_user) {
 					throw (socialnet::UserException {__LINE__});
 				}

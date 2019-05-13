@@ -27,15 +27,15 @@ static vector <User> get_users (unsigned int size)
 int main (int argc, char **argv)
 {
 	auto all_users = get_users (numeric_limits <unsigned int>::max ());
+	sort (all_users.begin (), all_users.end ());
 
-	socialnet::Hosts hosts;
-	hosts.initialize ();
+	auto http = make_shared <socialnet::Http> ();
 
 	vector <User> misskey_users;
 
 	for (auto user: all_users) {
 		string host_name = user.host;
-		auto host = hosts.get (host_name);
+		auto host = socialnet::make_host (host_name, http);
 		if (host
 			&& (host->implementation () == socialnet::eImplementation::GNUSOCIAL
 				|| host->implementation () == socialnet::eImplementation::PLEROMA
