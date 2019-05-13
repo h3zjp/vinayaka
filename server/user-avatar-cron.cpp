@@ -69,8 +69,6 @@ int main (int argc, char **argv)
 
 	auto http = make_shared <socialnet::Http> ();
 	
-	unsigned int peaceful_age_count = 0;
-
 	unsigned int cn = 0;
 
 	for (auto user: users) {
@@ -83,24 +81,20 @@ int main (int argc, char **argv)
 		string activitypub_id = user.user;
 		unsigned int number_of_followers = 0;
 		
-		if (peaceful_age_count < 16) {
-			cerr << cn << " " << user.host << " " << user.user << endl;
+		cerr << cn << " " << user.host << " " << user.user << endl;
 
-			try {
-				auto socialnet_user = socialnet::make_user (user.host, user.user, http);
-				if (! socialnet_user) {
-					throw (socialnet::UserException {__LINE__});
-				}
-				url = socialnet_user->url ();
-				implementation = socialnet_user->host->implementation ();
-				socialnet_user->get_profile (screen_name, bio, avatar, type, activitypub_id);
-				number_of_followers = socialnet_user->get_number_of_followers ();
-			} catch (socialnet::PeacefulAgeException e) {
-				peaceful_age_count ++;
-			} catch (socialnet::ExceptionWithLineNumber e) {
-				cerr << "Error " << e.line << endl;
-			};
-		}
+		try {
+			auto socialnet_user = socialnet::make_user (user.host, user.user, http);
+			if (! socialnet_user) {
+				throw (socialnet::UserException {__LINE__});
+			}
+			url = socialnet_user->url ();
+			implementation = socialnet_user->host->implementation ();
+			socialnet_user->get_profile (screen_name, bio, avatar, type, activitypub_id);
+			number_of_followers = socialnet_user->get_number_of_followers ();
+		} catch (socialnet::ExceptionWithLineNumber e) {
+			cerr << "Error " << e.line << endl;
+		};
 
 		cn ++;
 

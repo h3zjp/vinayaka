@@ -205,8 +205,6 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 {
 	auto http = make_shared <socialnet::Http> ();
 
-	unsigned int peaceful_age_count = 0;
-
 	for (auto &user_and_first_toot: users_and_first_toots) {
 		string host = user_and_first_toot.host;
 		string user = user_and_first_toot.user;
@@ -218,21 +216,17 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 		auto implementation = socialnet::eImplementation::UNKNOWN;
 		string activitypub_id = user;
 
-		if (peaceful_age_count < 16) {
-			try {
-				cerr << user << "@" << host << endl;
-				auto socialnet_user = socialnet::make_user (host, user, http);
-				if (! socialnet_user) {
-					throw (socialnet::UserException {__LINE__});
-				}
-				url = socialnet_user->url ();
-				implementation = socialnet_user->host->implementation ();
-				socialnet_user->get_profile (screen_name, bio, avatar, type);
-			} catch (socialnet::PeacefulAgeException e) {
-				peaceful_age_count ++;
-			} catch (socialnet::ExceptionWithLineNumber e) {
-				cerr << e.line << endl;
+		try {
+			cerr << user << "@" << host << endl;
+			auto socialnet_user = socialnet::make_user (host, user, http);
+			if (! socialnet_user) {
+				throw (socialnet::UserException {__LINE__});
 			}
+			url = socialnet_user->url ();
+			implementation = socialnet_user->host->implementation ();
+			socialnet_user->get_profile (screen_name, bio, avatar, type);
+		} catch (socialnet::ExceptionWithLineNumber e) {
+			cerr << e.line << endl;
 		}
 
 		user_and_first_toot.screen_name = screen_name;
