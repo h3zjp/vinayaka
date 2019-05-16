@@ -31,23 +31,18 @@ int main (int argc, char **argv)
 
 	auto http = make_shared <socialnet::Http> ();
 
-	vector <User> misskey_users;
+	vector <User> prefetch_users;
 
 	for (auto user: all_users) {
 		string host_name = user.host;
 		auto host = socialnet::make_host (host_name, http);
-		if (host
-			&& (host->implementation () == socialnet::eImplementation::GNUSOCIAL
-				|| host->implementation () == socialnet::eImplementation::PLEROMA
-				|| host->implementation () == socialnet::eImplementation::MISSKEY
-			)
-		) {
-			misskey_users.push_back (user);
+		if (host && host->implementation () == socialnet::eImplementation::PLEROMA) {
+			prefetch_users.push_back (user);
 		}
 	}
 
-	for (unsigned int cn = 0; cn < 8 * 60 && cn < misskey_users.size (); cn ++) {
-		auto user = misskey_users.at (cn);
+	for (unsigned int cn = 0; cn < 8 * 60 && cn < prefetch_users.size (); cn ++) {
+		auto user = prefetch_users.at (cn);
 		cerr << cn << " " << user.host << " " << user.user << endl;
 
 		auto pid = fork ();
