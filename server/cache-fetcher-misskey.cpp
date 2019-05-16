@@ -42,13 +42,12 @@ static string get_filtered_api (
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following_bool = user_object.at (string {"following"}).get <bool> ();
 		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
 		string url = user_object.at (string {"url"}).get <string> ();
 
-		if ((! local) && (! following_bool) && (! blacklisted) && (! bot)) {
+		if ((! local) && (! blacklisted) && (! bot)) {
 			stringstream out_user;
 			out_user
 				<< "{"
@@ -98,27 +97,30 @@ int main (int argc, char *argv [])
 		offset_stream >> offset;
 	}
 
-	bool hit;
-	string result = fetch_cache (host, user, hit);
-	if (hit) {
-		auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
-		cout << "Access-Control-Allow-Origin: *" << endl;
-		cout << "Content-Type: application/json" << endl << endl;
-		cout << get_filtered_api (result, host, user, limit, offset);
-	} else {
-		pid_t pid = fork ();
-		if (pid == 0) {
-			execv ("/usr/local/bin/vinayaka-user-match-impl", argv);
-		} else {
-			auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
-			int status;
-			waitpid (pid, &status, 0);
-			string result_2 = fetch_cache (host, user, hit);
-			cout << "Access-Control-Allow-Origin: *" << endl;
-			cout << "Content-Type: application/json" << endl << endl;
-			cout << get_filtered_api (result_2, host, user, limit, offset);
+	string s;
+	{
+		string file_name {"/var/lib/vinayaka/users-new-cache.json"};
+		FileLock lock {file_name, LOCK_SH};
+		FILE *in = fopen (file_name.c_str (), "r");
+		if (in == nullptr) {
+			cerr << file_name << " can not open." << endl;
+			exit (1);
+		}
+		for (; ; ) {
+		char b [1024];
+			auto fgets_return = fgets (b, 1024, in);
+			if (fgets_return == nullptr) {
+				break;
+			}
+			s += string {b};
 		}
 	}
+
+	auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
+
+	cout << "Access-Control-Allow-Origin: *" << endl;
+	cout << "Content-Type: application/json" << endl << endl;
+	cout << get_filtered_api (s, host, user, limit, offset);
 }
 
 
