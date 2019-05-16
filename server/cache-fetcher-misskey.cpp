@@ -116,8 +116,6 @@ int main (int argc, char *argv [])
 		}
 	}
 
-	auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
-
 	cout << "Access-Control-Allow-Origin: *" << endl;
 	cout << "Content-Type: application/json" << endl << endl;
 	cout << get_filtered_api (s, host, user, limit, offset);
