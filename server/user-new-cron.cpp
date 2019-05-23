@@ -115,16 +115,18 @@ static vector <UserAndBirthday> get_users_in_all_hosts ()
 {
 	vector <UserAndBirthday> users_in_all_hosts;
 	auto hosts = socialnet::get_hosts ();
+	unsigned int cn = 0;
 	for (auto host: hosts) {
-		cerr << host << endl;
+		cerr << (cn + 1) << "/" << hosts.size () << " " << host->host_name << endl;
 		try {
 			auto users_in_host = for_host (host);
 			for (auto user: users_in_host) {
 				users_in_all_hosts.push_back (user);
 			}
 		} catch (socialnet::ExceptionWithLineNumber e) {
-			cerr << "ERROR: " << e.line << " " << host << endl;
+			cerr << "ERROR: " << e.line << " " << host->host_name << endl;
 		}
+		cn ++;
 	}
 
 	set <User> blacklisted_users = get_blacklisted_users ();
