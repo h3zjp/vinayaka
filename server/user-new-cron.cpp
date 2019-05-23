@@ -18,11 +18,14 @@
 using namespace std;
 
 
-class UserAndFirstToot {
+static const unsigned int limit = 3 * 24 * 60 * 60;
+
+
+class UserAndBirthday {
 public:
 	string host;
 	string user;
-	time_t first_toot_timestamp;
+	time_t birthday;
 	bool blacklisted;
 	string screen_name;
 	string bio;
@@ -32,12 +35,12 @@ public:
 	socialnet::eImplementation implementation;
 	string activitypub_id;
 public:
-	UserAndFirstToot () {};
-	UserAndFirstToot
-		(string a_host, string a_user, time_t a_first_toot_timestamp):
+	UserAndBirthday () {};
+	UserAndBirthday
+		(string a_host, string a_user, time_t a_birthday):
 		host (a_host),
 		user (a_user),
-		first_toot_timestamp (a_first_toot_timestamp),
+		birthday (a_birthday),
 		blacklisted (false),
 		implementation (socialnet::eImplementation::UNKNOWN),
 		activitypub_id (a_user)
@@ -62,138 +65,70 @@ static bool valid_username (string s)
 }
 
 
-static vector <UserAndFirstToot> read_storage (FILE *in)
+static vector <UserAndBirthday> for_host (shared_ptr <socialnet::Host> socialnet_host)
 {
-	string s;
-	for (; ; ) {
-		if (feof (in)) {
-			break;
-		}
-		char b [1024];
-		fgets (b, 1024, in);
-		s += string {b};
-	}
-	picojson::value json_value;
-	picojson::parse (json_value, s);
-	auto json_array = json_value.get <picojson::array> ();
-	
-	vector <UserAndFirstToot> users_and_first_toots;
-	
-	for (auto user_value: json_array) {
-		auto user_object = user_value.get <picojson::object> ();
-		string host = user_object.at (string {"host"}).get <string> ();
-		string user = user_object.at (string {"user"}).get <string> ();
-		string first_toot_timestamp_string = user_object.at (string {"first_toot_timestamp"}).get <string> ();
-		time_t first_toot_timestamp;
-		stringstream {first_toot_timestamp_string} >> first_toot_timestamp;
-		users_and_first_toots.push_back (UserAndFirstToot {host, user, first_toot_timestamp});
-	}
-	
-	return users_and_first_toots;
-}
+	map <User, UserAndBirthday> users_to_birthday;
 
-
-static void write_storage (ofstream &out, vector <UserAndFirstToot> users_and_first_toots)
-{
-	out << "[" << endl;
-	for (unsigned int cn = 0; cn < users_and_first_toots.size (); cn ++) {
-		if (0 < cn) {
-			out << "," << endl;
-		}
-		auto user_and_first_toot = users_and_first_toots.at (cn);
-		out << "{";
-		out << "\"host\":\"" << escape_json (user_and_first_toot.host) << "\",";
-		out << "\"user\":\"" << escape_json (user_and_first_toot.user) << "\",";
-		out << "\"first_toot_timestamp\":\"" << user_and_first_toot.first_toot_timestamp << "\"";
-		out << "}";
-	}
-	out << "]" << endl;
-}
-
-
-static void for_host (shared_ptr <socialnet::Host> socialnet_host)
-{
-	map <User, UserAndFirstToot> users_to_first_toot;
-
-	const string filename = string {"/var/lib/vinayaka/user-first-toot/"} + socialnet_host->host_name + string {".json"};
-
-	{
-		FILE *in = fopen (filename.c_str (), "r");
-		if (in != nullptr) {
-			vector <UserAndFirstToot> users_and_first_toots = read_storage (in);
-			fclose (in);
-			for (auto user_and_first_toot: users_and_first_toots) {
-				User user {user_and_first_toot.host, user_and_first_toot.user};
-				users_to_first_toot.insert (pair <User, UserAndFirstToot> {user, user_and_first_toot});
-			}
-		}
-	}
-
-	auto toots = socialnet_host->get_local_timeline (60 * 60 * 6);
+	auto toots = socialnet_host->get_local_timeline (limit);
 
 	for (auto toot: toots) {
 		if (valid_username (toot.user_name)) {
 			User user {toot.host_name, toot.user_name};
-			UserAndFirstToot user_and_first_toot {toot.host_name, toot.user_name, toot.user_timestamp};
-			if (users_to_first_toot.find (user) == users_to_first_toot.end ()) {
-				users_to_first_toot.insert (pair <User, UserAndFirstToot> {user, user_and_first_toot});
+			UserAndBirthday user_and_birthday {toot.host_name, toot.user_name, toot.user_timestamp};
+			if (users_to_birthday.find (user) == users_to_birthday.end ()) {
+				users_to_birthday.insert (pair <User, UserAndBirthday> {user, user_and_birthday});
 			} else {
-				if (toot.user_timestamp < users_to_first_toot.at (user).first_toot_timestamp) {
-					users_to_first_toot.at (user) = user_and_first_toot;
+				if (user_and_birthday.birthday < users_to_birthday.at (user).birthday) {
+					users_to_birthday.at (user) = user_and_birthday;
 				}
 			}
 		}
 	}
 
-	{
-		vector <UserAndFirstToot> users_and_first_toots;
-		for (auto user_to_first_toot: users_to_first_toot) {
-			users_and_first_toots.push_back (user_to_first_toot.second);
+	time_t now = time (nullptr);
+
+	vector <UserAndBirthday> users_and_birthdays;
+	for (auto user_to_birthday: users_to_birthday) {
+		auto user_and_birthday = user_to_birthday.second;
+		auto birthday = user_and_birthday.birthday;
+		if (birthday < now && now - birthday < limit) {
+			users_and_birthdays.push_back (user_to_birthday.second);
 		}
-		ofstream out {filename};
-		write_storage (out, users_and_first_toots);
 	}
+	return users_and_birthdays;
 }
 
 
-static bool by_timestamp (const UserAndFirstToot &a, const UserAndFirstToot &b)
+static bool by_timestamp (const UserAndBirthday &a, const UserAndBirthday &b)
 {
-	return b.first_toot_timestamp < a.first_toot_timestamp;
+	return b.birthday < a.birthday;
 }
 
 
-static bool by_host_name (const UserAndFirstToot &a, const UserAndFirstToot &b)
+static bool by_host_name (const UserAndBirthday &a, const UserAndBirthday &b)
 {
 	return tuple <string, string> {a.host, a.user} < tuple <string, string> {b.host, b.user};
 }
 
 
-static vector <UserAndFirstToot> get_users_in_all_hosts (unsigned int limit, set <string> hosts)
+static vector <UserAndBirthday> get_users_in_all_hosts ()
 {
-	vector <UserAndFirstToot> users_in_all_hosts;
-	time_t now = time (nullptr);
+	vector <UserAndBirthday> users_in_all_hosts;
+	auto hosts = socialnet::get_hosts ();
 	for (auto host: hosts) {
 		cerr << host << endl;
-		const string filename = string {"/var/lib/vinayaka/user-first-toot/"} + host + string {".json"};
-
-		FILE *in = fopen (filename.c_str (), "r");
-		if (in != nullptr) {
-			vector <UserAndFirstToot> users_and_first_toots = read_storage (in);
-			fclose (in);
-			for (auto user_and_first_toot: users_and_first_toots) {
-				if (static_cast <time_t> (now - limit) <= user_and_first_toot.first_toot_timestamp) {
-					users_in_all_hosts.push_back (user_and_first_toot);
-				}
-			}
+		auto users_in_host = for_host (host);
+		for (auto user: users_in_host) {
+			users_in_all_hosts.push_back (user);
 		}
 	}
 
 	set <User> blacklisted_users = get_blacklisted_users ();
-	for (auto & users_and_first_toot: users_in_all_hosts) {
-		if (blacklisted_users.find (User {users_and_first_toot.host, users_and_first_toot.user}) != blacklisted_users.end ()
-			|| blacklisted_users.find (User {users_and_first_toot.host, string {"*"}}) != blacklisted_users.end ())
+	for (auto & user: users_in_all_hosts) {
+		if (blacklisted_users.find (User {user.host, user.user}) != blacklisted_users.end ()
+			|| blacklisted_users.find (User {user.host, string {"*"}}) != blacklisted_users.end ())
 		{
-			users_and_first_toot.blacklisted = true;
+			user.blacklisted = true;
 		}
 	}
 
@@ -201,13 +136,13 @@ static vector <UserAndFirstToot> get_users_in_all_hosts (unsigned int limit, set
 }
 
 
-static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_first_toots)
+static void get_profile_for_all_users (vector <UserAndBirthday> &users_and_birthday)
 {
 	auto http = make_shared <socialnet::Http> ();
 
-	for (auto &user_and_first_toot: users_and_first_toots) {
-		string host = user_and_first_toot.host;
-		string user = user_and_first_toot.user;
+	for (auto &user_and_birthday: users_and_birthday) {
+		string host = user_and_birthday.host;
+		string user = user_and_birthday.user;
 		string screen_name;
 		string bio;
 		string avatar;
@@ -229,29 +164,20 @@ static void get_profile_for_all_users (vector <UserAndFirstToot> &users_and_firs
 			cerr << e.line << endl;
 		}
 
-		user_and_first_toot.screen_name = screen_name;
-		user_and_first_toot.bio = bio;
-		user_and_first_toot.avatar = avatar;
-		user_and_first_toot.type = type;
-		user_and_first_toot.url = url;
-		user_and_first_toot.implementation = implementation;
-		user_and_first_toot.activitypub_id = activitypub_id;
+		user_and_birthday.screen_name = screen_name;
+		user_and_birthday.bio = bio;
+		user_and_birthday.avatar = avatar;
+		user_and_birthday.type = type;
+		user_and_birthday.url = url;
+		user_and_birthday.implementation = implementation;
+		user_and_birthday.activitypub_id = activitypub_id;
 	}
 }
 
 
-static void cache_sorted_result (set <string> hosts)
+static void cache_sorted_result ()
 {
-	unsigned int limit = 3 * 24 * 60 * 60;
-	vector <UserAndFirstToot> newcomers_raw = get_users_in_all_hosts (limit, hosts);
-
-	set <User> optouted_users = get_optouted_users ();
-	vector <UserAndFirstToot> newcomers;
-	for (auto newcomer: newcomers_raw) {
-		if (optouted_users.find (User {newcomer.host, newcomer.user}) == optouted_users.end ()) {
-			newcomers.push_back (newcomer);
-		}
-	}
+	vector <UserAndBirthday> newcomers = get_users_in_all_hosts ();
 
 	sort (newcomers.begin (), newcomers.end (), by_host_name);
 
@@ -273,7 +199,7 @@ static void cache_sorted_result (set <string> hosts)
 			<< "{"
 			<< "\"host\":\"" << escape_json (user.host) << "\","
 			<< "\"user\":\"" << escape_json (user.user) << "\","
-			<< "\"first_toot_timestamp\":\"" << user.first_toot_timestamp << "\",";
+			<< "\"first_toot_timestamp\":\"" << user.birthday << "\",";
 		if (safe_url (user.url)) {
 			out << "\"url\":\"" << user.url << "\",";
 		} else {
@@ -300,24 +226,7 @@ static void cache_sorted_result (set <string> hosts)
 
 int main (int argc, char **argv)
 {
-	auto hosts = socialnet::get_hosts ();
-
-	set <string> host_names;
-	for (auto host: hosts) {
-		host_names.insert (host->host_name);
-	}
-
-	cache_sorted_result (host_names);
-
-	for (auto host: hosts) {
-		cerr << host->host_name << endl;
-		try {
-			for_host (host);
-		} catch (socialnet::ExceptionWithLineNumber e) {
-			cerr << "Error " << e.line << endl;
-		}
-	}
-
+	cache_sorted_result ();
 	return 0;
 }
 
