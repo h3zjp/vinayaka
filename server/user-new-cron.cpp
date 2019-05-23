@@ -122,7 +122,7 @@ static vector <UserAndBirthday> get_users_in_all_hosts ()
 			for (auto user: users_in_host) {
 				users_in_all_hosts.push_back (user);
 			}
-		} catch (ExceptionWithLineNumber e) {
+		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << "ERROR: " << e.line << " " << host << endl;
 		}
 	}
