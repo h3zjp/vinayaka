@@ -20,8 +20,6 @@ www_files = \
 	kasaikuminkan.jpg \
 	user-match.js \
 	missing.svg \
-	user-speed.html \
-	user-speed.js \
 	missing.png \
 	blacklisted.png \
 	user-new.html \
