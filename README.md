@@ -1,50 +1,43 @@
-# Vinayaka
+# User Matching for GNU social, Mastodon, Pleroma, and microblog.pub
 
-語彙の類似からマストドンのユーザーを推挙するウェブアプリケーション
+Find users similar to you, by their vocabulary.
 
-http://vinayaka.distsn.org
+https://vinayaka.distsn.org
 (Alias: http://mastodonusermatching.tk)
 
-## API
+## APIs
 
-いずれもUTF-8 の JSON が返ります。
+### Matching
 
-### 似ているユーザーを検索
-
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mastodon.social+Gargron  
-(フル)
+https://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-api.cgi?mastodon.social+Gargron  
+(Full)
 
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-filtered-api.cgi?mastodon.social+Gargron  
-(本人、フォロー済み、ブラックリスト、ボットを除く)
+(Except oneself, bots, blacklisted, following)
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-osa-api.cgi?mastodon.social+Gargron  
-([おすすめフォロワー](https://followlink.osa-p.net/recommend.html)互換形式)
+https://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-osa-api.cgi?mastodon.social+Gargron  
+([おすすめフォロワー](https://followlink.osa-p.net/recommend.html) compatible)
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-suggestions-api.cgi?mastodon.social+Gargron  
-(マストドン公式 `/api/v1/suggestions` 互換)
+https://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-suggestions-api.cgi?mastodon.social+Gargron  
+(Mastodon's `/api/v1/suggestions` compatible)
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-misskey-api.cgi?mastodon.social+Gargron  
-(Misskey `/api/users/recommendation` 互換)
+### Search
 
-### ユーザーを検索
+https://vinayaka.distsn.org/cgi-bin/vinayaka-user-search-api.cgi?nagiept
 
-ユーザー名、スクリーンネーム、bioを検索します。
-
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-search-api.cgi?nagiept
-
-### 新規ユーザーリスト
+### Newcomers
 
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-api.cgi  
-(フル)
+(Full)
 
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-suggestions-api.cgi?mastodon.social+Gargron  
-(マストドン公式 `/api/v1/suggestions` 互換)
+(Mastodon's `/api/v1/suggestions` compatible)
 
-### 流速順ユーザーリスト
+### Active users
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi?100 (上位n人)
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi?100 (Top n)
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (フル)
+http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (Full)
 
 ## Install
 
