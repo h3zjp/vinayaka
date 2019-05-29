@@ -36,8 +36,18 @@ int main (int argc, char **argv)
 	for (auto user: all_users) {
 		string host_name = user.host;
 		auto host = socialnet::make_host (host_name, http);
-		if (host && host->implementation () == socialnet::eImplementation::PLEROMA) {
-			prefetch_users.push_back (user);
+		if (host) {
+			set <socialnet::eImplementation> implementations_for_prefetch {
+				socialnet::eImplementation::PLEROMA,
+				socialnet::eImplementation::M544,
+				socialnet::eImplementation::GNUSOCIAL,
+			};
+			if (
+				implementations_for_prefetch.find (host->implementation ())
+					!= implementations_for_prefetch.end ()
+			) {
+				prefetch_users.push_back (user);
+			}
 		}
 	}
 
