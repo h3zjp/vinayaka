@@ -26,7 +26,7 @@ static vector <User> get_users (unsigned int size)
 
 int main (int argc, char **argv)
 {
-	auto all_users = get_users (numeric_limits <unsigned int>::max ());
+	auto all_users = get_users (20000);
 	sort (all_users.begin (), all_users.end ());
 
 	auto http = make_shared <socialnet::Http> ();
@@ -51,7 +51,7 @@ int main (int argc, char **argv)
 		}
 	}
 
-	for (unsigned int cn = 0; cn < 8 * 60 && cn < prefetch_users.size (); cn ++) {
+	for (unsigned int cn = 0; cn < prefetch_users.size (); cn ++) {
 		auto user = prefetch_users.at (cn);
 		cerr << cn << " " << user.host << " " << user.user << endl;
 
