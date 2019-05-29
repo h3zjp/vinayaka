@@ -47,7 +47,11 @@ static string get_filtered_api (
 		bool bot = (type == string {"Service"});
 		string url = user_object.at (string {"url"}).get <string> ();
 
-		if ((! local) && (! blacklisted) && (! bot)) {
+		bool following_bool
+			= user_object.find (string {"following"}) != user_object.end ()
+			&& user_object.at (string {"following"}).get <bool> ();
+
+		if ((! local) && (! blacklisted) && (! following_bool) && (! bot)) {
 			stringstream out_user;
 			out_user
 				<< "{"
@@ -80,23 +84,34 @@ static string get_filtered_api (
 }
 
 
-int main (int argc, char *argv [])
+static void full (string host, string user, unsigned int limit, unsigned int offset, char *argv [])
 {
-	string host {argv [1]};
-	string user {argv [2]};
-
-	unsigned int limit = 64;
-	if (3 < argc) {
-		stringstream limit_stream {argv [3]};
-		limit_stream >> limit;
+	bool hit;
+	string result = fetch_cache (host, user, hit);
+	if (hit) {
+		auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
+		cout << "Access-Control-Allow-Origin: *" << endl;
+		cout << "Content-Type: application/json" << endl << endl;
+		cout << get_filtered_api (result, host, user, limit, offset);
+	} else {
+		pid_t pid = fork ();
+		if (pid == 0) {
+			execv ("/usr/local/bin/vinayaka-user-match-impl", argv);
+		} else {
+			auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
+			int status;
+			waitpid (pid, &status, 0);
+			string result_2 = fetch_cache (host, user, hit);
+			cout << "Access-Control-Allow-Origin: *" << endl;
+			cout << "Content-Type: application/json" << endl << endl;
+			cout << get_filtered_api (result_2, host, user, limit, offset);
+		}
 	}
+}
 
-	unsigned int offset = 0;
-	if (4 < argc) {
-		stringstream offset_stream {argv [4]};
-		offset_stream >> offset;
-	}
 
+static void fallback (unsigned int limit, unsigned int offset)
+{
 	string s;
 	{
 		string file_name {"/var/lib/vinayaka/users-new-cache.json"};
@@ -118,7 +133,33 @@ int main (int argc, char *argv [])
 
 	cout << "Access-Control-Allow-Origin: *" << endl;
 	cout << "Content-Type: application/json" << endl << endl;
-	cout << get_filtered_api (s, host, user, limit, offset);
+	cout << get_filtered_api (s, string {}, string {}, limit, offset);
+}
+
+
+int main (int argc, char *argv [])
+{
+	string host {argv [1]};
+	string user {argv [2]};
+
+	unsigned int limit = 64;
+	if (3 < argc) {
+		stringstream limit_stream {argv [3]};
+		limit_stream >> limit;
+	}
+
+	unsigned int offset = 0;
+	if (4 < argc) {
+		stringstream offset_stream {argv [4]};
+		offset_stream >> offset;
+	}
+
+	auto http = make_shared <socialnet::Http> ();
+	if (is_m544 (host, * http)) {
+		full (host, user, limit, offset, argv);
+	} else {
+		fallback (limit, offset);
+	}
 }
 
 
