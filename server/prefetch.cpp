@@ -27,31 +27,36 @@ static vector <User> get_users (unsigned int size)
 int main (int argc, char **argv)
 {
 	auto all_users = get_users (numeric_limits <unsigned int>::max ());
-	sort (all_users.begin (), all_users.end ());
+	
+	set <string> all_hosts;
+	for (auto user: all_users) {
+		all_hosts.insert (user.host);
+	}
 
 	auto http = make_shared <socialnet::Http> ();
-
-	vector <User> prefetch_users;
-
-	for (auto user: all_users) {
-		string host_name = user.host;
-		auto host = socialnet::make_host (host_name, http);
-		if (host) {
-			set <socialnet::eImplementation> implementations_for_prefetch {
-				socialnet::eImplementation::PLEROMA,
-				socialnet::eImplementation::M544,
-				socialnet::eImplementation::GNUSOCIAL,
-			};
-			if (
-				implementations_for_prefetch.find (host->implementation ())
-					!= implementations_for_prefetch.end ()
-			) {
-				prefetch_users.push_back (user);
-			}
+	set <socialnet::eImplementation> implementations_for_prefetch {
+		socialnet::eImplementation::PLEROMA,
+		socialnet::eImplementation::M544,
+		socialnet::eImplementation::GNUSOCIAL,
+	};
+	set <string> prefetch_hosts;
+	for (auto host: all_hosts) {
+		cerr << host << endl;
+		auto implementation = socialnet::get_implementation (host, * http);
+		if (implementations_for_prefetch.find (implementation) != implementations_for_prefetch.end ()) {
+			prefetch_hosts.insert (host);
 		}
 	}
 
-	for (unsigned int cn = 0; cn < 8 * 60 && cn < prefetch_users.size (); cn ++) {
+	vector <User> prefetch_users;
+	for (auto user: all_users) {
+		string host_name = user.host;
+		if (prefetch_hosts.find (user.host) != prefetch_hosts.end ()) {
+			prefetch_users.push_back (user);
+		}
+	}
+
+	for (unsigned int cn = 0; cn < 480 && cn < prefetch_users.size (); cn ++) {
 		auto user = prefetch_users.at (cn);
 		cerr << cn << " " << user.host << " " << user.user << endl;
 
