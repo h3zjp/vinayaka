@@ -195,7 +195,6 @@ static string format_result
 	(vector <UserAndSimilarity> speakers_and_similarity,
 	map <User, map <string, double>> speaker_to_intersection,
 	map <User, Profile> users_to_profile,
-	set <User> blacklisted_users,
 	set <socialnet::HostNameAndUserName> friends)
 {
 	stringstream out;
@@ -221,11 +220,6 @@ static string format_result
 			<< "\"host\":\"" << escape_json (speaker.host) << "\","
 			<< "\"user\":\"" << escape_json (speaker.user) << "\","
 			<< "\"similarity\":" << scientific << speaker.similarity << ",";
-
-		bool blacklisted
-			= (blacklisted_users.find (User {speaker.host, speaker.user}) != blacklisted_users.end ())
-			|| (blacklisted_users.find (User {speaker.host, string {"*"}}) != blacklisted_users.end ());
-		out << "\"blacklisted\":" << (blacklisted? "true": "false") << ",";
 
 		string activitypub_id = speaker.user;
 
@@ -340,14 +334,12 @@ int main (int argc, char **argv)
 		}
 		map <User, map <string, double>> dummy_speaker_to_intersection;
 		map <User, Profile> dummy_users_to_profile;
-		set <User> dummy_blacklisted_users;
 		set <socialnet::HostNameAndUserName> dummy_friends;
 
 		string result = format_result
 			(dummy_speakers_and_similarity,
 			dummy_speaker_to_intersection,
 			dummy_users_to_profile,
-			dummy_blacklisted_users,
 			dummy_friends);
 	
 		add_to_cache (host, user, result);
@@ -506,9 +498,6 @@ int main (int argc, char **argv)
 		}
 	}
 
-	cerr << "get_blacklisted_users" << endl;
-	set <User> blacklisted_users = get_blacklisted_users ();
-
 	cerr << "get_friends_no_exception" << endl;
 	set <socialnet::HostNameAndUserName> friends = socialnet_user->get_friends_no_exception ();
 
@@ -517,7 +506,6 @@ int main (int argc, char **argv)
 		(speakers_and_similarity,
 		speaker_to_intersection,
 		users_to_profile,
-		blacklisted_users,
 		friends);
 	
 	cerr << "add_to_cache" << endl;

@@ -39,7 +39,6 @@ static string get_advanced_api (string in)
 		string host = user_object.at (string {"host"}).get <string> ();
 		string user = user_object.at (string {"user"}).get <string> ();
 		double similarity = user_object.at (string {"similarity"}).get <double> ();
-		bool blacklisted = user_object.at (string {"blacklisted"}).get <bool> ();
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
@@ -67,7 +66,6 @@ static string get_advanced_api (string in)
 			<< "\"host\":\"" << escape_json (host) << "\","
 			<< "\"user\":\"" << escape_json (user) << "\","
 			<< "\"similarity\":" << scientific << similarity << ","
-			<< "\"blacklisted\":" << (blacklisted? "true": "false") << ","
 			<< "\"screen_name\":\"" << escape_json (screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (bio) << "\","
 			<< "\"avatar\":\"" << escape_json (avatar) << "\","

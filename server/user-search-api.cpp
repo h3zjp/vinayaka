@@ -29,18 +29,16 @@ public:
 	string type;
 	string url;
 	socialnet::eImplementation implementation;
-	bool blacklisted;
 public:
 	SearchResult ():
-		blacklisted (false)
+		implementation (socialnet::eImplementation::UNKNOWN)
 		{};
 	SearchResult (string a_host, string a_user, string a_at, string a_text):
 		host (a_host),
 		user (a_user),
 		at (a_at),
 		text (a_text),
-		implementation (socialnet::eImplementation::UNKNOWN),
-		blacklisted (false)
+		implementation (socialnet::eImplementation::UNKNOWN)
 		{};
 	bool operator < (const SearchResult &r) const {
 		return make_tuple (host, user, at, text) < make_tuple (r.host, r.user, r.at, r.text);
@@ -55,8 +53,7 @@ public:
 		json += string {"\"avatar\":\""} + escape_json (avatar) + string {"\","};
 		json += string {"\"type\":\""} + escape_json (type) + string {"\","};
 		json += string {"\"url\":\""} + escape_json (url) + string {"\","};
-		json += string {"\"implementation\":\""} + socialnet::format (implementation) + string {"\","};
-		json += string {"\"blacklisted\":"} + (blacklisted? string {"true"}: string {"false"});
+		json += string {"\"implementation\":\""} + socialnet::format (implementation) + string {"\""};
 		json += string {"}"};
 		return json;
 	};
@@ -140,14 +137,6 @@ int main (int argc, char **argv)
 			result.url = users_to_profile.at (user).url;
 			result.implementation = users_to_profile.at (user).implementation;
 		}
-	}
-
-	set <User> blacklisted_users = get_blacklisted_users ();
-	for (auto &search_result: search_results) {
-		bool blacklisted =
-			(blacklisted_users.find (User {search_result.host, search_result.user}) != blacklisted_users.end ())
-			|| (blacklisted_users.find (User {search_result.host, string {"*"}}) != blacklisted_users.end ());
-		search_result.blacklisted = blacklisted;
 	}
 
 	cout << "Access-Control-Allow-Origin: *" << endl;

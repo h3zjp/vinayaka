@@ -33,7 +33,6 @@ static string get_filtered_api (string in, string listener_host, string listener
 		auto user_object = user_value.get <picojson::object> ();
 		string host = user_object.at (string {"host"}).get <string> ();
 		string user = user_object.at (string {"user"}).get <string> ();
-		bool blacklisted = user_object.at (string {"blacklisted"}).get <bool> ();
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
@@ -43,7 +42,7 @@ static string get_filtered_api (string in, string listener_host, string listener
 		bool bot = (type == string {"Service"});
 		string url = user_object.at (string {"url"}).get <string> ();
 
-		if ((! local) && (! following_bool) && (! blacklisted) && (! bot)) {
+		if ((! local) && (! following_bool) && (! bot)) {
 			stringstream out_user;
 			out_user
 				<< "{"

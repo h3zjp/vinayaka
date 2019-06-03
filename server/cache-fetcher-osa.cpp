@@ -32,7 +32,6 @@ static string get_lightweight_api (string in, string listener_host, string liste
 		string host = user_object.at (string {"host"}).get <string> ();
 		string user = user_object.at (string {"user"}).get <string> ();
 		double similarity = user_object.at (string {"similarity"}).get <double> ();
-		bool blacklisted = user_object.at (string {"blacklisted"}).get <bool> ();
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
@@ -42,7 +41,7 @@ static string get_lightweight_api (string in, string listener_host, string liste
 		bool bot = (type == string {"Service"});
 		string url = user_object.at (string {"url"}).get <string> ();
 
-		if ((! local) && (! following_bool) && (! blacklisted) && (! bot)) {
+		if ((! local) && (! following_bool) && (! bot)) {
 			stringstream out;
 			out
 				<< "{"

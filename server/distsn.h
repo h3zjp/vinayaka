@@ -57,13 +57,11 @@ public:
 	std::string host;
 	std::string username;
 	double speed;
-	bool blacklisted;
 public:
-	UserAndSpeed (std::string a_host, std::string a_username, double a_speed, bool a_blacklisted) {
+	UserAndSpeed (std::string a_host, std::string a_username, double a_speed) {
 		host = a_host;
 		username = a_username;
 		speed = a_speed;
-		blacklisted = a_blacklisted;
 	};
 };
 
@@ -107,6 +105,15 @@ public:
 };
 
 
+class Blacklist {
+public:
+	std::set <User> blacklisted_users;
+public:
+	Blacklist ();
+	bool operator () (std::string host_name, std::string user_name) const;
+};
+
+
 std::string escape_json (std::string in);
 std::vector <std::string> get_words_from_toots
 	(std::vector <std::string> toots,
@@ -138,7 +145,6 @@ bool described (std::string screen_name, std::string bio, std::string avatar);
 /* sort-user-speed.cpp */
 std::vector <UserAndSpeed> get_users_and_speed ();
 std::vector <UserAndSpeed> get_users_and_speed_impl (double limit);
-std::set <User> get_blacklisted_users ();
 
 
 #endif /* #ifndef DISTSN_H */

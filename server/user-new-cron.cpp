@@ -26,7 +26,6 @@ public:
 	string host;
 	string user;
 	time_t birthday;
-	bool blacklisted;
 	string screen_name;
 	string bio;
 	string avatar;
@@ -41,7 +40,6 @@ public:
 		host (a_host),
 		user (a_user),
 		birthday (a_birthday),
-		blacklisted (false),
 		implementation (socialnet::eImplementation::UNKNOWN),
 		activitypub_id (a_user)
 		{};
@@ -129,16 +127,16 @@ static vector <UserAndBirthday> get_users_in_all_hosts ()
 		cn ++;
 	}
 
-	set <User> blacklisted_users = get_blacklisted_users ();
+	Blacklist blacklist;
+	vector <UserAndBirthday> not_blacklisted_users;
+
 	for (auto & user: users_in_all_hosts) {
-		if (blacklisted_users.find (User {user.host, user.user}) != blacklisted_users.end ()
-			|| blacklisted_users.find (User {user.host, string {"*"}}) != blacklisted_users.end ())
-		{
-			user.blacklisted = true;
+		if (! blacklist (user.host, user.user)) {
+			not_blacklisted_users.push_back (user);
 		}
 	}
 
-	return users_in_all_hosts;
+	return not_blacklisted_users;
 }
 
 
@@ -212,7 +210,6 @@ static void cache_sorted_result ()
 			out << "\"url\":\"\",";
 		}
 		out
-			<< "\"blacklisted\":" << (user.blacklisted? "true": "false") << ","
 			<< "\"screen_name\":\"" << escape_json (user.screen_name) << "\","
 			<< "\"bio\":\"" << escape_json (user.bio) << "\",";
 		if (safe_url (user.avatar)) {

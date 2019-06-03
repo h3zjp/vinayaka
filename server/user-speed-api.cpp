@@ -35,8 +35,7 @@ int main (int argc, char **argv)
 			<< "{"
 			<< "\"host\":\"" << escape_json (user.host) << "\","
 			<< "\"username\":\"" << escape_json (user.username) << "\","
-			<< "\"speed\":" << scientific << user.speed << ","
-			<< "\"blacklisted\":" << (user.blacklisted? "true": "false") << ",";
+			<< "\"speed\":" << scientific << user.speed << ",";
 			if (users_to_profile.find (User {user.host, user.username}) == users_to_profile.end ()) {
 				cout
 					<< "\"screen_name\":\"\","
