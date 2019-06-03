@@ -113,31 +113,29 @@ for (cn = 0; cn < users.length; cn ++) {
 	var user;
 	user = users [cn];
 	var user_html = '';
-	if (! user.blacklisted) {
-		user_html += '<p>'
-		user_html +=
-			'<a href="' +
-			escapeAttribute (user.url) +
-			'" target="_blank">' +
-			'<img class="avatar" src="';
-		if (user.avatar && 0 < user.avatar.length) {
-			user_html += mediaProxy (user.avatar)
-		} else {
-			user_html += 'missing.png';
-		}
-		user_html +=
-			'">' +
-			'</a>' +
-			'<a href="' +
-			escapeAttribute (user.url) +
-			'" target="_blank" class="headline">' +
-			escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
-			'</a>'
-		user_html +=
-			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
-			'<br>' + escapeHtml (user.text) +
-			'</p>'
+	user_html += '<p>'
+	user_html +=
+		'<a href="' +
+		escapeAttribute (user.url) +
+		'" target="_blank">' +
+		'<img class="avatar" src="';
+	if (user.avatar && 0 < user.avatar.length) {
+		user_html += mediaProxy (user.avatar)
+	} else {
+		user_html += 'missing.png';
 	}
+	user_html +=
+		'">' +
+		'</a>' +
+		'<a href="' +
+		escapeAttribute (user.url) +
+		'" target="_blank" class="headline">' +
+		escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
+		'</a>'
+	user_html +=
+		(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '') +
+		'<br>' + escapeHtml (user.text) +
+		'</p>'
 	html += user_html;
 }
 placeholder.innerHTML = html;

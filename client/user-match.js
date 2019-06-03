@@ -144,50 +144,35 @@ for (cn = 0; cn < users.length; cn ++) {
 	user = users [cn];
 	var this_is_me;
 	this_is_me = (user.host === current_host && user.user === current_user)
-	var blacklisted
-	blacklisted = user.blacklisted
-	if (detail || ((! this_is_me) && (! blacklisted)))
+	if (detail || (! this_is_me))
 	{
 		var user_html = '';
 		var m_following = 'Following'
 		var m_similarity = 'Similarity'
 		var m_bot = 'Bot'
-		if (blacklisted) {
-			user_html +=
-				'<p>' +
-				'<img class="avatar" src="blacklisted.png">' +
-				'<span class="headline">' + escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) + ' ' +
-				'<a class="icon" href="javascript:openBlacklistExplanation()">?</a>' +
-				'</span>' +
-				'<br>' +
-				m_similarity + ' ' + user.similarity.toFixed (0) +
-				(user.following? '<br>' + m_following: '') +
-				(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '')
+		user_html +=
+			'<p>' +
+			'<a href="' +
+			escapeAttribute (user.url) +
+			'" target="_blank">' +
+			'<img class="avatar" src="';
+		if (user.avatar && 0 < user.avatar.length) {
+			user_html += mediaProxy (user.avatar)
 		} else {
-			user_html +=
-				'<p>' +
-				'<a href="' +
-				escapeAttribute (user.url) +
-				'" target="_blank">' +
-				'<img class="avatar" src="';
-			if (user.avatar && 0 < user.avatar.length) {
-				user_html += mediaProxy (user.avatar)
-			} else {
-				user_html += 'missing.png';
-			}
-			user_html +=
-				'">' +
-				'</a>' +
-				'<a href="' +
-				escapeAttribute (user.url) +
-				'" target="_blank" class="headline">' +
-				escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
-				'</a>' +
-				'<br>' +
-				m_similarity + ' ' + user.similarity.toFixed (0) +
-				(user.following? '<br>' + m_following: '') +
-				(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '')
+			user_html += 'missing.png';
 		}
+		user_html +=
+			'">' +
+			'</a>' +
+			'<a href="' +
+			escapeAttribute (user.url) +
+			'" target="_blank" class="headline">' +
+			escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
+			'</a>' +
+			'<br>' +
+			m_similarity + ' ' + user.similarity.toFixed (0) +
+			(user.following? '<br>' + m_following: '') +
+			(user.type === 'Service'? '<br><strong>' + m_bot + '</strong>': '')
 		if (detail) {
 			user_html += '</p><p>';
 			user_html += '<small>';
