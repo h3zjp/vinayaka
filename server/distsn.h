@@ -107,7 +107,9 @@ public:
 
 class Blacklist {
 public:
-	std::set <User> blacklisted_users;
+	std::map <User, unsigned int> users_to_celebrityness;
+	std::map <User, socialnet::eImplementation> users_to_implementation;
+	std::vector <std::vector <std::string>> blacklist_table;
 public:
 	Blacklist ();
 	bool operator () (std::string host_name, std::string user_name) const;
