@@ -200,10 +200,9 @@ document.getElementById ('user-input').addEventListener ('input', function () {
 	{
 		var user = user_and_host_array [0];
 		var options =
+			'<option value="' + user + '@' + 'best-friends.chat' +'"></option>' +
 			'<option value="' + user + '@' + 'mastodon.social' +'"></option>' +
-			'<option value="' + user + '@' + 'pawoo.net' +'"></option>' +
-			'<option value="' + user + '@' + 'friends.nico' +'"></option>' +
-			'<option value="' + user + '@' + 'misskey.xyz' +'"></option>'
+			'<option value="' + user + '@' + 'pawoo.net' +'"></option>'
 		document.getElementById ('completes').innerHTML = options;
 	}
 }, false); /* document.getElementById ('user-input').addEventListener ('input', function () { */
