@@ -38,7 +38,8 @@ objects = \
 	user-new-suggestions-api.o \
 	cache-fetcher-misskey.o \
 	prefetch.o \
-	blacklist.o
+	blacklist.o \
+	test-blacklist.o
 
 cgi_binaries = \
 	vinayaka-user-speed-api.cgi \
@@ -59,7 +60,8 @@ cron_binaries = \
 impl_binaries = \
 	vinayaka-user-match-impl \
 	vinayaka-user-match-cache-fetcher \
-	vinayaka-user-match-cache-fetcher-osa
+	vinayaka-user-match-cache-fetcher-osa \
+	vinayaka-test-blacklist
 
 impl_scripts = \
 	vinayaka-user-match-resource-guard
@@ -137,6 +139,9 @@ vinayaka-user-match-misskey-api.cgi: distsn.o cache-fetcher-misskey.o
 
 vinayaka-prefetch-cron: distsn.o sort-user-speed.o blacklist.o prefetch.o
 	$(CXX) distsn.o sort-user-speed.o blacklist.o prefetch.o $(loading_libraries) $(CFLAGS) -o $@
+
+vinayaka-test-blacklist: distsn.o sort-user-speed.o blacklist.o test-blacklist.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o test-blacklist.o $(loading_libraries) $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
