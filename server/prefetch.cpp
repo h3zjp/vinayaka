@@ -36,7 +36,7 @@ int main (int argc, char **argv)
 	auto http = make_shared <socialnet::Http> ();
 	set <socialnet::eImplementation> implementations_for_prefetch {
 		socialnet::eImplementation::PLEROMA,
-		socialnet::eImplementation::M544,
+		socialnet::eImplementation::SECT,
 	};
 	set <string> prefetch_hosts;
 	for (auto host: all_hosts) {

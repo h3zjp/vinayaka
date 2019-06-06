@@ -154,7 +154,7 @@ int main (int argc, char *argv [])
 	}
 
 	auto http = make_shared <socialnet::Http> ();
-	if (is_m544 (host, * http)) {
+	if (is_sect (host, * http)) {
 		full (host, user, limit, offset, argv);
 	} else {
 		fallback (limit, offset);

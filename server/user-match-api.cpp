@@ -392,6 +392,31 @@ int main (int argc, char **argv)
 		cerr << "get_words_of_speakers" << endl;
 		map <User, set <string>> speaker_to_words
 			= get_words_of_speakers (string {"/var/lib/vinayaka/model/concrete-user-words.csv"});
+
+		cerr << "read_profiles" << endl;
+		users_to_profile = read_profiles ();
+
+		cerr << "detect listener's implementation" << endl;
+		socialnet::Http http;
+		auto listener_implementation = socialnet::get_implementation (host, http);
+		if (is_misskey (listener_implementation)) {
+			map <User, set <string>> speaker_to_words_with_good_implementations;
+			for (auto i: speaker_to_words) {
+				User user = i.first;
+				set <string> words = i.second;
+				socialnet::eImplementation speaker_implementation
+					= socialnet::eImplementation::UNKNOWN;
+				if (users_to_profile.find (user) != users_to_profile.end ()) {
+					Profile profile = users_to_profile.at (user);
+					speaker_implementation = profile.implementation;
+				}
+				if (! is_misskey (speaker_implementation)) {
+					speaker_to_words_with_good_implementations.insert
+						(pair <User, set <string>> {user, words});
+				}
+			}
+			speaker_to_words = speaker_to_words_with_good_implementations;
+		}
 	
 		cerr << "get_similarity" << endl;
 		unsigned int cn = 0;
@@ -413,9 +438,6 @@ int main (int argc, char **argv)
 			speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
 		}
 		cerr << endl;
-
-		cerr << "read_profiles" << endl;
-		users_to_profile = read_profiles ();
 
 		cerr << "affirmative_action" << endl;
 		for (auto &speaker_and_similarity: speakers_and_similarity) {
