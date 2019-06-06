@@ -37,7 +37,6 @@ int main (int argc, char **argv)
 	set <socialnet::eImplementation> implementations_for_prefetch {
 		socialnet::eImplementation::PLEROMA,
 		socialnet::eImplementation::M544,
-		socialnet::eImplementation::GNUSOCIAL,
 	};
 	set <string> prefetch_hosts;
 	for (auto host: all_hosts) {
@@ -56,7 +55,7 @@ int main (int argc, char **argv)
 		}
 	}
 
-	for (unsigned int cn = 0; cn < 480 && cn < prefetch_users.size (); cn ++) {
+	for (unsigned int cn = 0; cn < 240 && cn < prefetch_users.size (); cn ++) {
 		auto user = prefetch_users.at (cn);
 		cerr << cn << " " << user.host << " " << user.user << endl;
 
