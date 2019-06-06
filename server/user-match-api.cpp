@@ -397,8 +397,7 @@ int main (int argc, char **argv)
 		users_to_profile = read_profiles ();
 
 		cerr << "detect listener's implementation" << endl;
-		socialnet::Http http;
-		auto listener_implementation = socialnet::get_implementation (host, http);
+		auto listener_implementation = socialnet::get_implementation (host, * http);
 		if (is_misskey (listener_implementation)) {
 			map <User, set <string>> speaker_to_words_with_good_implementations;
 			for (auto i: speaker_to_words) {
