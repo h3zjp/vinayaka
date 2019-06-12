@@ -46,10 +46,11 @@ for (cn = 0; cn < users.length; cn ++) {
 	var user;
 	user = users [cn];
 	var user_html = '';
+	const user_url = user.url || 'https://' + user.host + '/users/' + user.user
 	user_html +=
 		'<p>' +
 		'<a href="' +
-		escapeAttribute (user.url) +
+		escapeAttribute (user_url) +
 		'" target="_blank">' +
 		'<img class="avatar" src="';
 	if (user.avatar && 0 < user.avatar.length) {
@@ -61,7 +62,7 @@ for (cn = 0; cn < users.length; cn ++) {
 		'">' +
 		'</a>' +
 		'<a href="' +
-		escapeAttribute (user.url) +
+		escapeAttribute (user_url) +
 		'" target="_blank" class="headline">' +
 		escapeHtml (user.user) + '@<wbr>' + escapeHtml (user.host) +
 		'</a>' +
