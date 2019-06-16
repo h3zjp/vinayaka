@@ -27,8 +27,7 @@ static vector <User> get_users (unsigned int size)
 int main (int argc, char **argv)
 {
 	auto all_users = get_users (numeric_limits <unsigned int>::max ());
-
-	auto http = make_shared <socialnet::Http> ();
+	map <User, Profile> profiles = read_profiles ();
 
 	const set <socialnet::eImplementation> implementations_for_prefetch {
 		socialnet::eImplementation::PLEROMA,
@@ -40,14 +39,18 @@ int main (int argc, char **argv)
 	vector <User> prefetch_users;
 
 	for (auto user: all_users) {
-		cerr << user.host << " " << user.user << endl;
 		if (capacity <= prefetch_users.size ()) {
 			break;
 		}
-		string host_name = user.host;
-		auto implementation = socialnet::get_implementation (host_name, * http);
-		if (implementations_for_prefetch.find (implementation) != implementations_for_prefetch.end ()) {
-			prefetch_users.push_back (user);
+		if (profiles.find (user) != profiles.end ()) {
+			Profile profile = profiles.at (user);
+			if (
+				profile.type != string {"Service"}
+				&& implementations_for_prefetch.find (profile.implementation)
+					!= implementations_for_prefetch.end ()
+			) {
+				prefetch_users.push_back (user);
+			}
 		}
 	}
 
