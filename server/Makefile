@@ -38,6 +38,7 @@ objects = \
 	user-new-suggestions-api.o \
 	cache-fetcher-misskey.o \
 	prefetch.o \
+	prefetch-influencers.o \
 	blacklist.o \
 	test-blacklist.o
 
@@ -55,7 +56,8 @@ cron_binaries = \
 	vinayaka-store-raw-toots-cron \
 	vinayaka-collect-raw-toots-cron \
 	vinayaka-user-new-cron \
-	vinayaka-prefetch-cron
+	vinayaka-prefetch-cron \
+	vinayaka-prefetch-influencers-cron
 
 impl_binaries = \
 	vinayaka-user-match-impl \
@@ -139,6 +141,9 @@ vinayaka-user-match-misskey-api.cgi: distsn.o cache-fetcher-misskey.o
 
 vinayaka-prefetch-cron: distsn.o sort-user-speed.o blacklist.o prefetch.o
 	$(CXX) distsn.o sort-user-speed.o blacklist.o prefetch.o $(loading_libraries) $(CFLAGS) -o $@
+
+vinayaka-prefetch-influencers-cron: distsn.o sort-user-speed.o blacklist.o prefetch-influencers.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o prefetch-influencers.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-test-blacklist: distsn.o sort-user-speed.o blacklist.o test-blacklist.o
 	$(CXX) distsn.o sort-user-speed.o blacklist.o test-blacklist.o $(loading_libraries) $(CFLAGS) -o $@
