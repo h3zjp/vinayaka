@@ -34,6 +34,7 @@ int main (int argc, char **argv)
 	const set <socialnet::eImplementation> implementations_for_prefetch {
 		socialnet::eImplementation::PLEROMA,
 		socialnet::eImplementation::SECT,
+		socialnet::eImplementation::IMPATIENT,
 	};
 	
 	const unsigned int capacity = 480;
