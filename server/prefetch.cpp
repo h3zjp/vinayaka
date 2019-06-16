@@ -37,7 +37,7 @@ int main (int argc, char **argv)
 		socialnet::eImplementation::IMPATIENT,
 	};
 	
-	const unsigned int capacity = 480;
+	const unsigned int capacity = 960;
 
 	vector <User> prefetch_users;
 
