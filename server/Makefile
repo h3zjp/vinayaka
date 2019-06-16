@@ -162,7 +162,7 @@ initialize:
 	$(MKDIR) -p /var/lib/vinayaka/raw-toots
 	$(MKDIR) -p /var/lib/vinayaka/model
 	$(MKDIR) -p /var/lib/vinayaka/user-first-toot
-	$(MKDIR) /var/lib/vinayaka/match-cache.d
+	$(MKDIR) -p /var/lib/vinayaka/match-cache.d
 	$(TOUCH) /var/lib/vinayaka/model/concrete-user-words.csv
 	$(TOUCH) /var/lib/vinayaka/model/popularity.csv
 	$(TOUCH) /var/lib/vinayaka/users-new-cache.json
