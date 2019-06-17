@@ -63,11 +63,14 @@ Write following code in crontab:
 30 */6 * * * /usr/local/bin/vinayaka-collect-raw-toots-cron
 36 */6 * * * /usr/local/bin/vinayaka-store-raw-toots-cron
 42 */8 * * * /usr/local/bin/vinayaka-prefetch-cron
+48 */8 * * * /usr/local/bin/vinayaka-prefetch-influencers-cron
 ```
 
 Write following code in crontab for the root:
 
-    42 2 * * 2 /usr/local/bin/vinayaka-https-renew-cron
+```
+6 2 * * 2 /usr/local/bin/vinayaka-https-renew-cron
+```
 
 ## Update
 
