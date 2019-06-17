@@ -2,7 +2,7 @@
 
 Find users similar to you, by their vocabulary.
 
-https://vinayaka.distsn.org
+https://distsn.org
 (Alias: http://mastodonusermatching.tk)
 
 ## APIs
