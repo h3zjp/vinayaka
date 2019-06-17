@@ -47,6 +47,7 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (Full)
 ### Optional
 
 * https://gitlab.com/distsn/vinayaka-blacklist (Anti-abuse policy)
+* https://github.com/distsn/collect-peers (APIs)
 * https://gitlab.com/distsn/distsn-fe (Web frontend)
 
 ## Install
