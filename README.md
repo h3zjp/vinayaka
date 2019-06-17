@@ -55,6 +55,7 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (Full)
 Optional dependency: 
 
     $ sudo apt install build-essential libcurl4-openssl-dev libtinyxml2-dev libcrypto++-dev apache2
+    # cd src
     $ make clean
     $ make
     $ sudo make install
@@ -83,6 +84,7 @@ Write following code in crontab for the root:
 
 ## Update
 
+    $ cd src
     $ make clean
     $ make
     $ sudo make install
