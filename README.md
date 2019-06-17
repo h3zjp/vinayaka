@@ -2,7 +2,7 @@
 
 Find users similar to you, by their vocabulary.
 
-https://vinayaka.distsn.org
+https://distsn.org
 (Alias: http://mastodonusermatching.tk)
 
 ## APIs
@@ -39,13 +39,23 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi?100 (Top n)
 
 http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (Full)
 
+## Depends on
+
+* https://gitlab.com/distsn/libsocialnet  
+* https://gitlab.com/distsn/liblanguagemodel  
+
+### Optional
+
+* https://gitlab.com/distsn/vinayaka-blacklist (Anti-abuse policy)
+* https://github.com/distsn/collect-peers (APIs)
+* https://gitlab.com/distsn/distsn-fe (Web frontend)
+
 ## Install
 
-Depends on: https://gitlab.com/distsn/libsocialnet  
-Depends on: https://gitlab.com/distsn/liblanguagemodel  
-Optional dependency: https://gitlab.com/distsn/vinayaka-blacklist
+Optional dependency: 
 
     $ sudo apt install build-essential libcurl4-openssl-dev libtinyxml2-dev libcrypto++-dev apache2
+    # cd src
     $ make clean
     $ make
     $ sudo make install
@@ -74,6 +84,7 @@ Write following code in crontab for the root:
 
 ## Update
 
+    $ cd src
     $ make clean
     $ make
     $ sudo make install
