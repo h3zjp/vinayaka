@@ -56,6 +56,8 @@ int main (int argc, char **argv)
 		}
 	}
 
+	prefetch_users.push_back (User {string {"mastodon.social"}, string {"Gargron"}});
+
 	if (dry_run) {
 		for (unsigned int cn = 0; cn < prefetch_users.size (); cn ++) {
 			auto user = prefetch_users.at (cn);
