@@ -15,6 +15,9 @@ using namespace tinyxml2;
 using namespace std;
 
 
+const string user_agent {"vinayaka https://github.com/distsn/vinayaka"};
+
+
 string escape_json (string in)
 {
 	return languagemodel::escape_json (in);

@@ -17,6 +17,9 @@
 #include "picojson.h"
 
 
+extern const std::string user_agent;
+
+
 class ExceptionWithLineNumber: public std::exception {
 public:
 	unsigned int line;

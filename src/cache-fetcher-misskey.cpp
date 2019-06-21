@@ -88,7 +88,6 @@ static void full (string host, string user, unsigned int limit, unsigned int off
 	bool hit;
 	string result = fetch_cache (host, user, hit);
 	if (hit) {
-		auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
 		cout << "Access-Control-Allow-Origin: *" << endl;
 		cout << "Content-Type: application/json" << endl << endl;
 		cout << get_filtered_api (result, host, user, limit, offset);
@@ -97,7 +96,6 @@ static void full (string host, string user, unsigned int limit, unsigned int off
 		if (pid == 0) {
 			execv ("/usr/local/bin/vinayaka-user-match-impl", argv);
 		} else {
-			auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
 			int status;
 			waitpid (pid, &status, 0);
 			string result_2 = fetch_cache (host, user, hit);
@@ -154,6 +152,7 @@ int main (int argc, char *argv [])
 	}
 
 	auto http = make_shared <socialnet::Http> ();
+	http->user_agent = user_agent;
 	if (is_sect (host, * http)) {
 		full (host, user, limit, offset, argv);
 	} else {

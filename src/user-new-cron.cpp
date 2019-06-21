@@ -143,6 +143,7 @@ static vector <UserAndBirthday> get_users_in_all_hosts ()
 static void get_profile_for_all_users (vector <UserAndBirthday> &users_and_birthday)
 {
 	auto http = make_shared <socialnet::Http> ();
+	http->user_agent = user_agent;
 
 	for (auto &user_and_birthday: users_and_birthday) {
 		string host = user_and_birthday.host;

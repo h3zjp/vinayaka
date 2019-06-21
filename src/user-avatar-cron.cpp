@@ -68,6 +68,7 @@ int main (int argc, char **argv)
 	vector <pair <User, Profile>> users_and_profiles;
 
 	auto http = make_shared <socialnet::Http> ();
+	http->user_agent = user_agent;
 	
 	unsigned int cn = 0;
 

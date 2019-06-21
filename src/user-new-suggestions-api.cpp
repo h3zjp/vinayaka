@@ -14,7 +14,7 @@
 using namespace std;
 
 
-static string get_filtered_api (string in, set <socialnet::HostNameAndUserName> friends, string listener_host, string listener_user)
+static string get_filtered_api (string in, string listener_host, string listener_user)
 {
 
 	picojson::value json_value;
@@ -37,13 +37,12 @@ static string get_filtered_api (string in, set <socialnet::HostNameAndUserName> 
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
 		string activitypub_id = user_object.at (string {"activitypub_id"}).get <string> ();
-		bool following_bool = socialnet::following (host, user, activitypub_id, friends);
 		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
 		bool described_bool = described (screen_name, bio, avatar);
 
-		if ((! local) && (! following_bool) && (! bot) && described_bool) {
+		if ((! local) && (! bot) && described_bool) {
 			stringstream out_user;
 			out_user
 				<< "{"
@@ -101,11 +100,8 @@ int main (int argc, char *argv [])
 		}
 	}
 
-	auto socialnet_user = socialnet::make_user (host, user, make_shared <socialnet::Http> ());
-	auto friends = socialnet_user->get_friends_no_exception ();
-
 	cout << "Access-Control-Allow-Origin: *" << endl;
 	cout << "Content-Type: application/json" << endl << endl;
-	cout << get_filtered_api (s, friends, host, user);
+	cout << get_filtered_api (s, host, user);
 }
 

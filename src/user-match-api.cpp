@@ -347,6 +347,7 @@ int main (int argc, char **argv)
 	}
 
 	auto http = make_shared <socialnet::Http> ();
+	http->user_agent = user_agent;
 	auto socialnet_user = socialnet::make_user (host, user, http);
 
 	string screen_name;
