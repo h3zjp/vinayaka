@@ -112,7 +112,11 @@ static bool by_host_name (const UserAndBirthday &a, const UserAndBirthday &b)
 static vector <UserAndBirthday> get_users_in_all_hosts ()
 {
 	vector <UserAndBirthday> users_in_all_hosts;
-	auto hosts = socialnet::get_hosts ();
+
+	auto http = make_shared <socialnet::Http> ();
+	http->user_agent = user_agent;
+	auto hosts = socialnet::get_hosts (http);
+
 	unsigned int cn = 0;
 	for (auto host: hosts) {
 		cerr << (cn + 1) << "/" << hosts.size () << " " << host->host_name << endl;

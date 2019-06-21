@@ -142,7 +142,9 @@ static void for_host (shared_ptr <socialnet::Host> host)
 
 int main (int argc, char **argv)
 {
-	auto hosts = socialnet::get_hosts ();
+	auto http = make_shared <socialnet::Http> ();
+	http->user_agent = user_agent;
+	auto hosts = socialnet::get_hosts (http);
 
 	for (auto host: hosts) {
 		cerr << host->host_name << endl;

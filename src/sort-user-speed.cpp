@@ -75,7 +75,9 @@ vector <UserAndSpeed> get_users_and_speed_impl (double limit)
 	set <string> host_names;
 
 	{
-		auto hosts = socialnet::get_hosts ();
+		auto http = make_shared <socialnet::Http> ();
+		http->user_agent = user_agent;
+		auto hosts = socialnet::get_hosts (http);
 		for (auto host: hosts) {
 			host_names.insert (host->host_name);
 		}
