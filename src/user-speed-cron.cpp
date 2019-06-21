@@ -149,7 +149,9 @@ int main (int argc, char **argv)
 	for (auto host: hosts) {
 		cerr << host->host_name << endl;
 		try {
-			for_host (host);
+			if (host->host_name != string {"mstdn.jp"}) { /* API limit */
+				for_host (host);
+			}
 		} catch (socialnet::HttpException e) {
 			cerr << "socialnet::HttpException" << " " << e.line << endl;
 		} catch (socialnet::HostException e) {
