@@ -27,17 +27,17 @@ https://vinayaka.distsn.org/cgi-bin/vinayaka-user-search-api.cgi?nagiept
 
 ### Newcomers
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-api.cgi  
+https://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-api.cgi  
 (Full)
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-suggestions-api.cgi  
+https://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-suggestions-api.cgi  
 (Mastodon's `/api/v1/suggestions` compatible)
 
 ### Active users
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi?100 (Top n)
+https://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi?100 (Top n)
 
-http://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (Full)
+https://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (Full)
 
 ## Depends on
 
