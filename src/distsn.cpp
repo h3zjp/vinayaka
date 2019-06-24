@@ -433,7 +433,7 @@ set <User> get_optouted_users ()
 			[bio] (string code)
 		{
 			string i_bio = to_lower_case (bio);
-			string i_code = to_lower_case (i_code);
+			string i_code = to_lower_case (code);
 			return i_bio.find (i_code) != i_bio.npos;
 		});
 		if (optouted) {
