@@ -418,6 +418,7 @@ set <User> get_optouted_users ()
 		string {"㊙️"},
 		string {"#rejectsearchengine"},
 		string {"#rejectvinayaka"},
+		string {"#nobot"},
 	};
 
 	map <User, Profile> users_to_profile = read_profiles ();
