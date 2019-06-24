@@ -329,7 +329,7 @@ int main (int argc, char **argv)
 		cerr << "optouted." << endl;
 
 		vector <UserAndSimilarity> dummy_speakers_and_similarity;
-		for (unsigned int cn = 0; cn < 400; cn ++) {
+		for (unsigned int cn = 0; cn < 3; cn ++) {
 			dummy_speakers_and_similarity.push_back (UserAndSimilarity {"example.com", "example", 0.0});
 		}
 		map <User, map <string, double>> dummy_speaker_to_intersection;
