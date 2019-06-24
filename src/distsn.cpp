@@ -402,8 +402,24 @@ string fetch_cache (string a_host, string a_user, bool & a_hit)
 }
 
 
+static string to_lower_case (string in)
+{
+	string out;
+	for (auto c: in) {
+		out.push_back ('A' <= c && c <= 'Z'? c - 'A' + 'a': c);
+	}
+	return out;
+}
+
+
 set <User> get_optouted_users ()
 {
+	set <string> optout_codes {
+		string {"㊙️"},
+		string {"#rejectsearchengine"},
+		string {"#rejectvinayaka"},
+	};
+
 	map <User, Profile> users_to_profile = read_profiles ();
 	
 	set <User> optouted_users;
@@ -411,7 +427,15 @@ set <User> get_optouted_users ()
 		User user = user_to_profile.first;
 		Profile profile = user_to_profile.second;
 		string bio = profile.bio;
-		bool optouted = (bio.find ("㊙️") != bio.npos);
+		bool optouted = any_of (
+			optout_codes.begin (),
+			optout_codes.end (),
+			[bio] (string code)
+		{
+			string i_bio = to_lower_case (bio);
+			string i_code = to_lower_case (i_code);
+			return i_bio.find (i_code) != i_bio.npos;
+		});
 		if (optouted) {
 			optouted_users.insert (user);
 		}
