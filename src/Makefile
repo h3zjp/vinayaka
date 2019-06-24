@@ -40,7 +40,8 @@ objects = \
 	prefetch.o \
 	prefetch-influencers.o \
 	blacklist.o \
-	test-blacklist.o
+	test-blacklist.o \
+	test-optout.o
 
 cgi_binaries = \
 	vinayaka-user-speed-api.cgi \
@@ -63,7 +64,8 @@ impl_binaries = \
 	vinayaka-user-match-impl \
 	vinayaka-user-match-cache-fetcher \
 	vinayaka-user-match-cache-fetcher-osa \
-	vinayaka-test-blacklist
+	vinayaka-test-blacklist \
+	vinayaka-test-optout
 
 impl_scripts = \
 	vinayaka-user-match-resource-guard
@@ -147,6 +149,9 @@ vinayaka-prefetch-influencers-cron: distsn.o sort-user-speed.o blacklist.o prefe
 
 vinayaka-test-blacklist: distsn.o sort-user-speed.o blacklist.o test-blacklist.o
 	$(CXX) distsn.o sort-user-speed.o blacklist.o test-blacklist.o $(loading_libraries) $(CFLAGS) -o $@
+
+vinayaka-test-optout: distsn.o sort-user-speed.o blacklist.o test-optout.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o test-optout.o $(loading_libraries) $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)

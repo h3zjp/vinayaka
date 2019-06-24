@@ -50,4 +50,6 @@ vinayaka-user-match-misskey-api.cgi
 vinayaka-prefetch-cron
 vinayaka-prefetch-influencers-cron
 vinayaka-test-blacklist
+vinayaka-test-optout
+
 
