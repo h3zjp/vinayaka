@@ -340,7 +340,7 @@ int main (int argc, char **argv)
 		Profile dummy_profile;
 		dummy_profile.screen_name = string {"Vinayaka Optouting Info"};
 		dummy_profile.type = string {"Person"};
-		dummy_profile.url = string {"https://3.distsn.org/users/optout"};
+		dummy_profile.url = string {"https://3.distsn.org/optout"};
 		dummy_profile.implementation = socialnet::eImplementation::PLEROMA;
 		dummy_profile.number_of_followers = 0;
 
