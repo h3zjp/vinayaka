@@ -45,12 +45,13 @@ static string get_filtered_api (
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
 		string url = user_object.at (string {"url"}).get <string> ();
+		bool optout = (host == string {"3.distsn.org"} && user == string {"optout"});
 
 		bool following_bool
 			= user_object.find (string {"following"}) != user_object.end ()
 			&& user_object.at (string {"following"}).get <bool> ();
 
-		if ((! local) && (! following_bool) && (! bot)) {
+		if (optout || ((! local) && (! following_bool) && (! bot))) {
 			stringstream out_user;
 			out_user
 				<< "{"

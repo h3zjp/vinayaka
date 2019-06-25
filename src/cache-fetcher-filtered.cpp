@@ -42,8 +42,9 @@ static string get_filtered_api (string in, string listener_host, string listener
 		string type = user_object.at (string {"type"}).get <string> ();
 		bool bot = (type == string {"Service"});
 		string url = user_object.at (string {"url"}).get <string> ();
+		bool optout = (host == string {"3.distsn.org"} && user == string {"optout"});
 
-		if ((! local) && (! following_bool) && (! bot)) {
+		if (optout || ((! local) && (! following_bool) && (! bot))) {
 			vector <string> intersection_vector;
 			map <string, double> intersection_map;
 			auto intersection_array = user_object.at (string {"intersection"}).get <picojson::array> ();
