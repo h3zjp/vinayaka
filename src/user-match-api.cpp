@@ -333,9 +333,23 @@ int main (int argc, char **argv)
 			dummy_speakers_and_similarity.push_back
 				(UserAndSimilarity {"3.distsn.org", "optout", 0.0});
 		}
+
 		map <User, map <string, double>> dummy_speaker_to_intersection;
-		map <User, Profile> dummy_users_to_profile;
 		set <socialnet::HostNameAndUserName> dummy_friends;
+
+		Profile dummy_profile;
+		dummy_profile.screen_name = string {"Vinayaka Optouting Info"};
+		dummy_profile.type = string {"Person"};
+		dummy_profile.url = string {"https://3.distsn.org/users/optout"};
+		dummy_profile.implementation = socialnet::eImplementation::PLEROMA;
+		dummy_profile.number_of_followers = 0;
+
+		map <User, Profile> dummy_users_to_profile {
+			pair <User, Profile> {
+				User {"3.distsn.org", "optout"},
+				dummy_profile
+			}
+		};
 
 		string result = format_result
 			(dummy_speakers_and_similarity,
