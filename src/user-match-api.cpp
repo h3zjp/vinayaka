@@ -330,7 +330,8 @@ int main (int argc, char **argv)
 
 		vector <UserAndSimilarity> dummy_speakers_and_similarity;
 		for (unsigned int cn = 0; cn < 3; cn ++) {
-			dummy_speakers_and_similarity.push_back (UserAndSimilarity {"example.com", "example", 0.0});
+			dummy_speakers_and_similarity.push_back
+				(UserAndSimilarity {"3.distsn.org", "optout", 0.0});
 		}
 		map <User, map <string, double>> dummy_speaker_to_intersection;
 		map <User, Profile> dummy_users_to_profile;
