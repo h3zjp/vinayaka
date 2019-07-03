@@ -18,7 +18,9 @@
 using namespace std;
 
 
-static const unsigned int limit = 3 * 24 * 60 * 60;
+static const unsigned int limit = 7 * 24 * 60 * 60;
+static const unsigned int interval = 6 * 60 * 60;
+static const string filename {"/var/lib/vinayaka/users-new-cache.json"};
 
 
 class UserAndBirthday {
@@ -63,40 +65,6 @@ static bool valid_username (string s)
 }
 
 
-static vector <UserAndBirthday> for_host (shared_ptr <socialnet::Host> socialnet_host)
-{
-	map <User, UserAndBirthday> users_to_birthday;
-
-	auto toots = socialnet_host->get_local_timeline (limit);
-
-	for (auto toot: toots) {
-		if (valid_username (toot.user_name)) {
-			User user {toot.host_name, toot.user_name};
-			UserAndBirthday user_and_birthday {toot.host_name, toot.user_name, toot.user_timestamp};
-			if (users_to_birthday.find (user) == users_to_birthday.end ()) {
-				users_to_birthday.insert (pair <User, UserAndBirthday> {user, user_and_birthday});
-			} else {
-				if (user_and_birthday.birthday < users_to_birthday.at (user).birthday) {
-					users_to_birthday.at (user) = user_and_birthday;
-				}
-			}
-		}
-	}
-
-	time_t now = time (nullptr);
-
-	vector <UserAndBirthday> users_and_birthdays;
-	for (auto user_to_birthday: users_to_birthday) {
-		auto user_and_birthday = user_to_birthday.second;
-		auto birthday = user_and_birthday.birthday;
-		if (birthday < now && now - birthday < limit) {
-			users_and_birthdays.push_back (user_to_birthday.second);
-		}
-	}
-	return users_and_birthdays;
-}
-
-
 static bool by_timestamp (const UserAndBirthday &a, const UserAndBirthday &b)
 {
 	return b.birthday < a.birthday;
@@ -109,21 +77,84 @@ static bool by_host_name (const UserAndBirthday &a, const UserAndBirthday &b)
 }
 
 
-static vector <UserAndBirthday> get_users_in_all_hosts ()
+static vector <UserAndBirthday> read_storage ()
 {
-	vector <UserAndBirthday> users_in_all_hosts;
+	FileLock {filename, LOCK_SH};
+	FILE *in = fopen (filename.c_str (), "r");
+	if (in == nullptr) {
+		cerr << "File " << filename << " can not open." << endl;
+		exit (1);
+	}
 
+	string s;
+	for (; ; ) {
+		if (feof (in)) {
+			break;
+		}
+		char b [1024];
+		fgets (b, 1024, in);
+		s += string {b};
+	}
+	picojson::value json_value;
+	string parse_error = picojson::parse (json_value, s);
+	
+	if (! parse_error.empty ()) {
+		cerr << parse_error << endl;
+		return vector <UserAndBirthday> {};
+	}
+	
+	auto json_array = json_value.get <picojson::array> ();
+
+	vector <UserAndBirthday> users_and_first_toots;
+
+	for (auto user_value: json_array) {
+		auto user_object = user_value.get <picojson::object> ();
+		string host = user_object.at (string {"host"}).get <string> ();
+		string user = user_object.at (string {"user"}).get <string> ();
+		string first_toot_timestamp_string = user_object.at (string {"first_toot_timestamp"}).get <string> ();
+		time_t first_toot_timestamp;
+		stringstream {first_toot_timestamp_string} >> first_toot_timestamp;
+		users_and_first_toots.push_back (UserAndBirthday {host, user, first_toot_timestamp});
+	}
+
+	return users_and_first_toots;
+}
+
+
+static vector <UserAndBirthday> get_users_in_all_hosts (vector <UserAndBirthday> known_users)
+{
 	auto http = make_shared <socialnet::Http> ();
 	http->user_agent = user_agent;
 	auto hosts = socialnet::get_hosts (http);
+
+	map <User, UserAndBirthday> users_to_birthday;
+
+	for (auto user_and_birthday: known_users) {
+		User user {user_and_birthday.host, user_and_birthday.user};
+		time_t birthday {user_and_birthday.birthday};
+		if (users_to_birthday.find (user) == users_to_birthday.end ()) {
+			users_to_birthday.insert (pair <User, UserAndBirthday> {user, user_and_birthday});
+		}
+	}
 
 	unsigned int cn = 0;
 	for (auto host: hosts) {
 		cerr << (cn + 1) << "/" << hosts.size () << " " << host->host_name << endl;
 		try {
-			auto users_in_host = for_host (host);
-			for (auto user: users_in_host) {
-				users_in_all_hosts.push_back (user);
+			auto toots = host->get_local_timeline (interval);
+
+			for (auto toot: toots) {
+				if (valid_username (toot.user_name)) {
+					User user {toot.host_name, toot.user_name};
+					UserAndBirthday user_and_birthday {toot.host_name, toot.user_name, toot.user_timestamp};
+					if (users_to_birthday.find (user) == users_to_birthday.end ()) {
+						users_to_birthday.insert (pair <User, UserAndBirthday> {user, user_and_birthday});
+					} else {
+						if (user_and_birthday.birthday < users_to_birthday.at (user).birthday) {
+							users_to_birthday.at (user) = user_and_birthday;
+						}
+					}
+				}
 			}
 		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << "ERROR: " << e.line << " " << host->host_name << endl;
@@ -131,16 +162,36 @@ static vector <UserAndBirthday> get_users_in_all_hosts ()
 		cn ++;
 	}
 
+	vector <UserAndBirthday> users;
+
+	for (auto user_to_birthday: users_to_birthday) {
+		users.push_back (user_to_birthday.second);
+	}
+
+	time_t now = time (nullptr);
+	vector <UserAndBirthday> young_users;
+
+	for (auto user_and_birthday: users) {
+		auto birthday = user_and_birthday.birthday;
+		if (birthday < now && now - birthday < limit) {
+			young_users.push_back (user_and_birthday);
+		}
+	}
+
+	users = young_users;
+
 	Blacklist blacklist;
 	vector <UserAndBirthday> not_blacklisted_users;
 
-	for (auto & user: users_in_all_hosts) {
+	for (auto user: users) {
 		if (! blacklist (user.host, user.user)) {
 			not_blacklisted_users.push_back (user);
 		}
 	}
 
-	return not_blacklisted_users;
+	users = not_blacklisted_users;
+
+	return users;
 }
 
 
@@ -148,6 +199,8 @@ static void get_profile_for_all_users (vector <UserAndBirthday> &users_and_birth
 {
 	auto http = make_shared <socialnet::Http> ();
 	http->user_agent = user_agent;
+
+	sort (users_and_birthday.begin (), users_and_birthday.end (), by_host_name);
 
 	for (auto &user_and_birthday: users_and_birthday) {
 		string host = user_and_birthday.host;
@@ -184,17 +237,10 @@ static void get_profile_for_all_users (vector <UserAndBirthday> &users_and_birth
 }
 
 
-static void cache_sorted_result ()
+static void cache_sorted_result (vector <UserAndBirthday> newcomers)
 {
-	vector <UserAndBirthday> newcomers = get_users_in_all_hosts ();
-
-	sort (newcomers.begin (), newcomers.end (), by_host_name);
-
-	get_profile_for_all_users (newcomers);
-
 	sort (newcomers.begin (), newcomers.end (), by_timestamp);
 
-	const string filename {"/var/lib/vinayaka/users-new-cache.json"};
 	FileLock {filename};
 	ofstream out {filename};
 
@@ -234,7 +280,12 @@ static void cache_sorted_result ()
 
 int main (int argc, char **argv)
 {
-	cache_sorted_result ();
+	vector <UserAndBirthday> known_users = read_storage ();
+	vector <UserAndBirthday> newcomers = get_users_in_all_hosts (known_users);
+
+	get_profile_for_all_users (newcomers);
+
+	cache_sorted_result (newcomers);
 	return 0;
 }
 
