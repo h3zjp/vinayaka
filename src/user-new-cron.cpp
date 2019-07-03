@@ -131,7 +131,6 @@ static vector <UserAndBirthday> get_users_in_all_hosts (vector <UserAndBirthday>
 
 	for (auto user_and_birthday: known_users) {
 		User user {user_and_birthday.host, user_and_birthday.user};
-		time_t birthday {user_and_birthday.birthday};
 		if (users_to_birthday.find (user) == users_to_birthday.end ()) {
 			users_to_birthday.insert (pair <User, UserAndBirthday> {user, user_and_birthday});
 		}
