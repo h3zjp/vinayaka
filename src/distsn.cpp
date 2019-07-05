@@ -470,6 +470,7 @@ bool described (std::string screen_name, std::string bio, std::string avatar)
 		&& bio != string {"<p></p>"}
 		&& (! avatar.empty ())
 		&& (! ends_with (avatar, string {"/avi.png"}))
+		&& (! ends_with (avatar, string {"/default-avatar-profile.png"}))
 		&& (! (starts_with (avatar, string {"https://img.pawoo.net/"})
 			&& ends_with (avatar, string {"/data.png"})));
 }
