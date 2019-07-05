@@ -446,6 +446,14 @@ set <User> get_optouted_users ()
 }
 
 
+static bool starts_with (string a, string b)
+{
+	return
+		b.size () <= a.size ()
+		&& a.substr (0, b.size ()) == b;
+}
+
+
 static bool ends_with (string a, string b)
 {
 	return
@@ -461,7 +469,9 @@ bool described (std::string screen_name, std::string bio, std::string avatar)
 		&& (! bio.empty ())
 		&& bio != string {"<p></p>"}
 		&& (! avatar.empty ())
-		&& (! ends_with (avatar, string {"/avi.png"}));
+		&& (! ends_with (avatar, string {"/avi.png"}))
+		&& (! (starts_with (avatar, string {"https://img.pawoo.net/"})
+			&& ends_with (avatar, string {"/data.png"})));
 }
 
 
