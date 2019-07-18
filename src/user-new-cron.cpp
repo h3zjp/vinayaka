@@ -20,7 +20,8 @@ using namespace std;
 
 static const unsigned int limit = 7 * 24 * 60 * 60;
 static const unsigned int interval = 6 * 60 * 60;
-static const string filename {"/var/lib/vinayaka/users-new-cache.json"};
+static const string filename_store {"/var/lib/vinayaka/users-new-store.json"};
+static const string filename_cache {"/var/lib/vinayaka/users-new-cache.json"};
 
 
 class UserAndBirthday {
@@ -35,6 +36,7 @@ public:
 	string url;
 	socialnet::eImplementation implementation;
 	string activitypub_id;
+	unsigned int celebrityness;
 public:
 	UserAndBirthday () {};
 	UserAndBirthday
@@ -43,7 +45,8 @@ public:
 		user (a_user),
 		birthday (a_birthday),
 		implementation (socialnet::eImplementation::UNKNOWN),
-		activitypub_id (a_user)
+		activitypub_id (a_user),
+		celebrityness (0)
 		{};
 };
 
@@ -77,8 +80,10 @@ static bool by_host_name (const UserAndBirthday &a, const UserAndBirthday &b)
 }
 
 
-static vector <UserAndBirthday> read_storage ()
+static void read_storage (string filename, vector <UserAndBirthday> & a_users_and_birthday)
 {
+	a_users_and_birthday.clear ();
+
 	FileLock {filename, LOCK_SH};
 	FILE *in = fopen (filename.c_str (), "r");
 	if (in == nullptr) {
@@ -100,7 +105,7 @@ static vector <UserAndBirthday> read_storage ()
 	
 	if (! parse_error.empty ()) {
 		cerr << parse_error << endl;
-		return vector <UserAndBirthday> {};
+		return;
 	}
 	
 	auto json_array = json_value.get <picojson::array> ();
@@ -117,7 +122,7 @@ static vector <UserAndBirthday> read_storage ()
 		users_and_first_toots.push_back (UserAndBirthday {host, user, first_toot_timestamp});
 	}
 
-	return users_and_first_toots;
+	a_users_and_birthday = users_and_first_toots;
 }
 
 
@@ -177,20 +182,7 @@ static vector <UserAndBirthday> get_users_in_all_hosts (vector <UserAndBirthday>
 		}
 	}
 
-	users = young_users;
-
-	Blacklist blacklist;
-	vector <UserAndBirthday> not_blacklisted_users;
-
-	for (auto user: users) {
-		if (! blacklist (user.host, user.user)) {
-			not_blacklisted_users.push_back (user);
-		}
-	}
-
-	users = not_blacklisted_users;
-
-	return users;
+	return young_users;
 }
 
 
@@ -211,6 +203,7 @@ static void get_profile_for_all_users (vector <UserAndBirthday> &users_and_birth
 		string url = string {"https://"} + host + string {"/users/"} + user;
 		auto implementation = socialnet::eImplementation::UNKNOWN;
 		string activitypub_id = user;
+		unsigned int celebrityness = 0;
 
 		try {
 			cerr << user << "@" << host << endl;
@@ -221,6 +214,7 @@ static void get_profile_for_all_users (vector <UserAndBirthday> &users_and_birth
 			url = socialnet_user->url ();
 			implementation = socialnet_user->host->implementation ();
 			socialnet_user->get_profile (screen_name, bio, avatar, type);
+			celebrityness = socialnet_user->get_number_of_followers ();
 		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << e.line << endl;
 		}
@@ -232,11 +226,12 @@ static void get_profile_for_all_users (vector <UserAndBirthday> &users_and_birth
 		user_and_birthday.url = url;
 		user_and_birthday.implementation = implementation;
 		user_and_birthday.activitypub_id = activitypub_id;
+		user_and_birthday.celebrityness = celebrityness;
 	}
 }
 
 
-static void cache_sorted_result (vector <UserAndBirthday> newcomers)
+static void cache_sorted_result (vector <UserAndBirthday> newcomers, string filename)
 {
 	sort (newcomers.begin (), newcomers.end (), by_timestamp);
 
@@ -279,12 +274,26 @@ static void cache_sorted_result (vector <UserAndBirthday> newcomers)
 
 int main (int argc, char **argv)
 {
-	vector <UserAndBirthday> known_users = read_storage ();
+	vector <UserAndBirthday> known_users;
+	read_storage (filename_store, known_users);
 	vector <UserAndBirthday> newcomers = get_users_in_all_hosts (known_users);
+	cache_sorted_result (newcomers, filename_store);
 
 	get_profile_for_all_users (newcomers);
 
-	cache_sorted_result (newcomers);
+	Blacklist blacklist;
+	vector <UserAndBirthday> public_newcomers;
+	
+	for (auto i: newcomers) {
+		if (
+			(! blacklist (i.implementation, i.host, i.user, i.celebrityness))
+			&& (! optouted (i.bio))
+		) {
+			public_newcomers.push_back (i);
+		}
+	}
+
+	cache_sorted_result (public_newcomers, filename_cache);
 	return 0;
 }
 

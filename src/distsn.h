@@ -116,6 +116,12 @@ public:
 public:
 	Blacklist ();
 	bool operator () (std::string host_name, std::string user_name) const;
+	bool operator () (
+		socialnet::eImplementation implementation,
+		std::string host_name,
+		std::string user_name,
+		unsigned int celebrityness
+	) const;
 };
 
 
@@ -144,6 +150,7 @@ void add_to_cache (std::string host, std::string user, std::string result);
 std::string fetch_cache (std::string a_host, std::string a_user, bool & a_hit);
 
 std::set <User> get_optouted_users ();
+bool optouted (std::string bio);
 
 bool described (std::string screen_name, std::string bio, std::string avatar);
 

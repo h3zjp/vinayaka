@@ -412,7 +412,7 @@ static string to_lower_case (string in)
 }
 
 
-set <User> get_optouted_users ()
+bool optouted (string bio)
 {
 	set <string> optout_codes {
 		string {"㊙️"},
@@ -421,6 +421,22 @@ set <User> get_optouted_users ()
 		string {"#nobot"},
 	};
 
+	bool optouted = any_of (
+		optout_codes.begin (),
+		optout_codes.end (),
+		[bio] (string code)
+	{
+		string i_bio = to_lower_case (bio);
+		string i_code = to_lower_case (code);
+		return i_bio.find (i_code) != i_bio.npos;
+	});
+
+	return optouted;
+}
+
+
+set <User> get_optouted_users ()
+{
 	map <User, Profile> users_to_profile = read_profiles ();
 	
 	set <User> optouted_users;
@@ -428,16 +444,7 @@ set <User> get_optouted_users ()
 		User user = user_to_profile.first;
 		Profile profile = user_to_profile.second;
 		string bio = profile.bio;
-		bool optouted = any_of (
-			optout_codes.begin (),
-			optout_codes.end (),
-			[bio] (string code)
-		{
-			string i_bio = to_lower_case (bio);
-			string i_code = to_lower_case (code);
-			return i_bio.find (i_code) != i_bio.npos;
-		});
-		if (optouted) {
+		if (optouted (bio)) {
 			optouted_users.insert (user);
 		}
 	}

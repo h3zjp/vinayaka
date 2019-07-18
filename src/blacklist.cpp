@@ -46,6 +46,17 @@ bool Blacklist::operator () (string a_host_name, string a_user_name) const
 		implementation = users_to_implementation.at (user);
 	}
 
+	return (* this) (implementation, a_host_name, a_user_name, celebrityness);
+}
+
+
+bool Blacklist::operator () (
+	socialnet::eImplementation implementation,
+	string a_host_name,
+	string a_user_name,
+	unsigned int celebrityness
+) const
+{
 	for (vector <string> row: blacklist_table) {
 		if (4 <= row.size ()) {
 			string implementation_field_string = row.at (0);
@@ -109,4 +120,5 @@ bool Blacklist::operator () (string a_host_name, string a_user_name) const
 
 	return false;
 }
+
 
