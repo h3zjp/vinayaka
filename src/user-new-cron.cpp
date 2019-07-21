@@ -145,18 +145,21 @@ static vector <UserAndBirthday> get_users_in_all_hosts (vector <UserAndBirthday>
 	for (auto host: hosts) {
 		cerr << (cn + 1) << "/" << hosts.size () << " " << host->host_name << endl;
 		try {
-			auto toots = host->get_local_timeline (interval);
+			auto newcomers = host->get_newcomers (interval, limit);
+			for (auto i: newcomers) {
+				socialnet::HostNameAndUserName socialnet_user = i.first;
+				time_t birthday = i.second;
 
-			for (auto toot: toots) {
-				if (valid_username (toot.user_name)) {
-					User user {toot.host_name, toot.user_name};
-					UserAndBirthday user_and_birthday {toot.host_name, toot.user_name, toot.user_timestamp};
-					if (users_to_birthday.find (user) == users_to_birthday.end ()) {
-						users_to_birthday.insert (pair <User, UserAndBirthday> {user, user_and_birthday});
-					} else {
-						if (user_and_birthday.birthday < users_to_birthday.at (user).birthday) {
-							users_to_birthday.at (user) = user_and_birthday;
-						}
+				User user
+					{socialnet_user.host_name, socialnet_user.user_name};
+				UserAndBirthday user_and_birthday
+					{socialnet_user.host_name, socialnet_user.user_name, birthday};
+
+				if (users_to_birthday.find (user) == users_to_birthday.end ()) {
+					users_to_birthday.insert (pair <User, UserAndBirthday> {user, user_and_birthday});
+				} else {
+					if (user_and_birthday.birthday < users_to_birthday.at (user).birthday) {
+						users_to_birthday.at (user) = user_and_birthday;
 					}
 				}
 			}
