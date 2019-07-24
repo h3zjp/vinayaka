@@ -14,52 +14,34 @@
 using namespace std;
 
 
-static string get_filtered_api (string in)
+static string get_filtered_api ()
 {
-
-	picojson::value json_value;
-	string json_parse_error = picojson::parse (json_value, in);
-	if (! json_parse_error.empty ()) {
-		cerr << json_parse_error << endl;
-		exit (1);
-	}
-
-	auto users_array = json_value.get <picojson::array> ();
+	socialnet::Newcomers newcomers;
+	socialnet::Http http;
+	http.user_agent = user_agent;
+	newcomers.receive (http);
+	auto well_explained_users = newcomers.get_well_explained_users ();
 
 	vector <string> filtered_formats;
 
-	for (unsigned int cn = 0; cn < users_array.size (); cn ++) {
-		auto user_value = users_array.at (cn);
-		auto user_object = user_value.get <picojson::object> ();
-		string host = user_object.at (string {"host"}).get <string> ();
-		string user = user_object.at (string {"user"}).get <string> ();
-		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
-		string bio = user_object.at (string {"bio"}).get <string> ();
-		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		string activitypub_id = user_object.at (string {"activitypub_id"}).get <string> ();
-		string type = user_object.at (string {"type"}).get <string> ();
-		bool bot = (type == string {"Service"});
-		bool described_bool = described (screen_name, bio, avatar);
-
-		if ((! bot) && described_bool) {
-			stringstream out_user;
-			out_user
-				<< "{"
-				<< "\"id\":\"" << escape_json (string {"0"}) << "\","
-				<< "\"username\":\"" << escape_json (user) << "\","
-				<< "\"acct\":\"" << escape_json (user + string {"@"} + host) << "\","
-				<< "\"display_name\":\"" << escape_json (screen_name) << "\","
-				<< "\"bot\":false,"
-				<< "\"note\":\"" << escape_json (bio) << "\","
-				<< "\"url\":\"" << escape_json (string {"https://"} + host + string {"/users/"} + user) << "\","
-				<< "\"avatar\":\"" << escape_json (avatar) << "\","
-				<< "\"avatar_static\":\"" << escape_json (avatar) << "\","
-				<< "\"followers_count\":0,"
-				<< "\"following_count\":0,"
-				<< "\"statuses_count\":0"
-				<< "}";
-			filtered_formats.push_back (out_user.str ());
-		}
+	for (auto user: well_explained_users) {
+		stringstream out_user;
+		out_user
+			<< "{"
+			<< "\"id\":\"" << escape_json (string {"0"}) << "\","
+			<< "\"username\":\"" << escape_json (user.user_name) << "\","
+			<< "\"acct\":\"" << escape_json (user.user_name + string {"@"} + user.host_name) << "\","
+			<< "\"display_name\":\"" << escape_json (user.screen_name) << "\","
+			<< "\"bot\":false,"
+			<< "\"note\":\"" << escape_json (user.bio) << "\","
+			<< "\"url\":\"" << escape_json (user.url) << "\","
+			<< "\"avatar\":\"" << escape_json (user.avatar) << "\","
+			<< "\"avatar_static\":\"" << escape_json (user.avatar) << "\","
+			<< "\"followers_count\":0,"
+			<< "\"following_count\":0,"
+			<< "\"statuses_count\":0"
+			<< "}";
+		filtered_formats.push_back (out_user.str ());
 	}
 
 	string out;
@@ -77,27 +59,8 @@ static string get_filtered_api (string in)
 
 int main (int argc, char *argv [])
 {
-	string s;
-	{
-		string file_name {"/var/lib/vinayaka/users-new-cache.json"};
-		FileLock lock {file_name, LOCK_SH};
-		FILE *in = fopen (file_name.c_str (), "r");
-		if (in == nullptr) {
-			cerr << file_name << " can not open." << endl;
-			exit (1);
-		}
-		for (; ; ) {
-		char b [1024];
-			auto fgets_return = fgets (b, 1024, in);
-			if (fgets_return == nullptr) {
-				break;
-			}
-			s += string {b};
-		}
-	}
-
 	cout << "Access-Control-Allow-Origin: *" << endl;
 	cout << "Content-Type: application/json" << endl << endl;
-	cout << get_filtered_api (s);
+	cout << get_filtered_api ();
 }
 
