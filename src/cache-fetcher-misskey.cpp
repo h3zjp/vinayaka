@@ -110,28 +110,46 @@ static void full (string host, string user, unsigned int limit, unsigned int off
 
 static void fallback (unsigned int limit, unsigned int offset)
 {
-	string s;
-	{
-		string file_name {"/var/lib/vinayaka/users-new-cache.json"};
-		FileLock lock {file_name, LOCK_SH};
-		FILE *in = fopen (file_name.c_str (), "r");
-		if (in == nullptr) {
-			cerr << file_name << " can not open." << endl;
-			exit (1);
-		}
-		for (; ; ) {
-		char b [1024];
-			auto fgets_return = fgets (b, 1024, in);
-			if (fgets_return == nullptr) {
-				break;
-			}
-			s += string {b};
-		}
+	socialnet::Newcomers newcomers;
+	socialnet::Http http;
+	http.user_agent = user_agent;
+	newcomers.receive (http);
+	auto well_explained_users = newcomers.get_well_explained_users ();
+
+	vector <string> filtered_formats_raw;
+
+	for (auto user: well_explained_users) {
+		stringstream out_user;
+		out_user
+			<< "{"
+			<< "\"name\":\"" << escape_json (user.screen_name) << "\","
+			<< "\"username\":\"" << escape_json (user.user_name) << "\","
+			<< "\"avatarUrl\":\"" << escape_json (user.avatar) << "\","
+			<< "\"description\":\"" << escape_json (user.bio) << "\","
+			<< "\"host\":\"" << escape_json (user.host_name) << "\""
+			<< "}";
+		filtered_formats_raw.push_back (out_user.str ());
 	}
+
+	vector <string> filtered_formats;
+	for (unsigned int cn = 0; cn < limit && cn + offset < filtered_formats_raw.size (); cn ++) {
+		string format = filtered_formats_raw.at (cn + offset);
+		filtered_formats.push_back (format);
+	}
+
+	string out;
+	out += string {"["};
+	for (unsigned int cn = 0; cn < filtered_formats.size (); cn ++) {
+		if (0 < cn) {
+			out += string {","};
+		}
+		out += filtered_formats.at (cn);
+	}
+	out += string {"]"};
 
 	cout << "Access-Control-Allow-Origin: *" << endl;
 	cout << "Content-Type: application/json" << endl << endl;
-	cout << get_filtered_api (s, string {}, string {}, limit, offset);
+	cout << out;
 }
 
 
