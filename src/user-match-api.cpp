@@ -458,67 +458,29 @@ int main (int argc, char **argv)
 	} else {
 		/* toots.size () < 4 */
 		
-		string s;
-		{
-			string file_name {"/var/lib/vinayaka/users-new-cache.json"};
-			FileLock lock {file_name, LOCK_SH};
-			FILE *in = fopen (file_name.c_str (), "r");
-			if (in == nullptr) {
-				cerr << file_name << " can not open." << endl;
-				exit (1);
-			}
-			for (; ; ) {
-			char b [1024];
-				auto fgets_return = fgets (b, 1024, in);
-				if (fgets_return == nullptr) {
-					break;
-				}
-				s += string {b};
-			}
-		}
-		picojson::value json_value;
-		string json_parse_error = picojson::parse (json_value, s);
-		if (! json_parse_error.empty ()) {
-			cerr << json_parse_error << endl;
-			exit (1);
-		}
+		socialnet::Newcomers newcomers;
+		newcomers.receive (* http);
+		auto well_explained_users = newcomers.get_well_explained_users ();
+		
+		for (auto user: well_explained_users) {
+			UserAndSimilarity speaker_and_similarity;
+			speaker_and_similarity.host = user.host_name;
+			speaker_and_similarity.user = user.user_name;
+			speaker_and_similarity.similarity = static_cast <double> (0);
+			speakers_and_similarity.push_back (speaker_and_similarity);
 
-		auto users_array = json_value.get <picojson::array> ();
-
-		for (unsigned int cn = 0; cn < users_array.size (); cn ++) {
-			auto user_value = users_array.at (cn);
-			auto user_object = user_value.get <picojson::object> ();
-			string host = user_object.at (string {"host"}).get <string> ();
-			string user = user_object.at (string {"user"}).get <string> ();
-
-			string screen_name = user_object.at (string {"screen_name"}).get <string> ();
-			string bio = user_object.at (string {"bio"}).get <string> ();
-			string avatar = user_object.at (string {"avatar"}).get <string> ();
-
-			string type = user_object.at (string {"type"}).get <string> ();
-
-			bool described_bool = described (screen_name, bio, avatar);
-
-			if (described_bool) {
-				UserAndSimilarity speaker_and_similarity;
-				speaker_and_similarity.host = host;
-				speaker_and_similarity.user = user;
-				speaker_and_similarity.similarity = static_cast <double> (0);
-				speakers_and_similarity.push_back (speaker_and_similarity);
-
-				User speaker {host, user};
-				map <string, double> intersection;
-				speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
-				
-				Profile profile;
-				profile.screen_name = screen_name;
-				profile.bio = bio;
-				profile.avatar = avatar;
-				profile.type = type;
-				profile.url = string {};
-				profile.implementation = socialnet::eImplementation::UNKNOWN;
-				users_to_profile.insert (pair <User, Profile> {speaker, profile});
-			}
+			User speaker {user.host_name, user.user_name};
+			map <string, double> intersection;
+			speaker_to_intersection.insert (pair <User, map <string, double>> {speaker, intersection});
+			
+			Profile profile;
+			profile.screen_name = user.screen_name;
+			profile.bio = user.bio;
+			profile.avatar = user.avatar;
+			profile.type = user.type;
+			profile.url = user.url;
+			profile.implementation = user.implementation;
+			users_to_profile.insert (pair <User, Profile> {speaker, profile});
 		}
 	}
 
