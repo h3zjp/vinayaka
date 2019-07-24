@@ -485,7 +485,7 @@ int main (int argc, char **argv)
 	}
 
 	cerr << "get_friends_no_exception" << endl;
-	set <socialnet::HostNameAndUserName> friends = socialnet_user->get_friends_no_exception ();
+	set <socialnet::HostNameAndUserName> friends {};
 
 	cerr << "format_result" << endl;
 	string result = format_result
