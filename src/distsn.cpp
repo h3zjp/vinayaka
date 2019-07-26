@@ -426,13 +426,24 @@ static string to_lower_case (string in)
 }
 
 
+static string mastodon_hashtag_in_bio (string x) {
+	return
+		string {"#\u003cspan\u003e"}
+		+ x
+		+ string {"\u003c/span\u003e"};
+}
+
+
 bool optouted (string bio)
 {
 	set <string> optout_codes {
 		string {"㊙️"},
 		string {"#rejectsearchengine"},
+		mastodon_hashtag_in_bio (string {"rejectsearchengine"}),
 		string {"#rejectvinayaka"},
+		mastodon_hashtag_in_bio (string {"rejectvinayaka"}),
 		string {"#nobot"},
+		mastodon_hashtag_in_bio (string {"nobot"}),
 	};
 
 	bool optouted = any_of (
