@@ -444,6 +444,8 @@ bool optouted (string bio)
 		mastodon_hashtag_in_bio (string {"rejectvinayaka"}),
 		string {"#nobot"},
 		mastodon_hashtag_in_bio (string {"nobot"}),
+		string {"#nobots"},
+		mastodon_hashtag_in_bio (string {"nobots"}),
 	};
 
 	bool optouted = any_of (
