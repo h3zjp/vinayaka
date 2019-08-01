@@ -28,7 +28,7 @@ https://vinayaka.distsn.org/cgi-bin/vinayaka-user-search-api.cgi?nagiept
 ### Newcomers
 
 https://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-api.cgi  
-(Full)
+(Obsolute, see https://gitlab.com/distsn/newcomers)
 
 https://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-suggestions-api.cgi  
 (Mastodon's `/api/v1/suggestions` compatible)
