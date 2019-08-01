@@ -33,7 +33,6 @@ objects = \
 	user-speed-cron.o \
 	store-raw-toots.o \
 	collect-raw-toots.o \
-	user-new-cron.o \
 	user-search-api.o \
 	user-new-suggestions-api.o \
 	cache-fetcher-misskey.o \
@@ -75,8 +74,7 @@ binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
 cgi_scripts = \
 	vinayaka-user-match-api.cgi \
 	vinayaka-user-match-osa-api.cgi \
-	vinayaka-user-profiles-api.cgi \
-	vinayaka-user-new-api.cgi
+	vinayaka-user-profiles-api.cgi
 
 cron_scripts = \
 	vinayaka-clear-cache-cron \
@@ -128,9 +126,6 @@ vinayaka-store-raw-toots-cron: distsn.o sort-user-speed.o blacklist.o store-raw-
 
 vinayaka-collect-raw-toots-cron: distsn.o sort-user-speed.o blacklist.o collect-raw-toots.o
 	$(CXX) distsn.o sort-user-speed.o blacklist.o collect-raw-toots.o $(loading_libraries) $(CFLAGS) -o $@
-
-vinayaka-user-new-cron: distsn.o sort-user-speed.o blacklist.o user-new-cron.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o user-new-cron.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-search-api.cgi: distsn.o sort-user-speed.o blacklist.o user-search-api.o
 	$(CXX) distsn.o sort-user-speed.o blacklist.o user-search-api.o $(loading_libraries) $(CFLAGS) -o $@
