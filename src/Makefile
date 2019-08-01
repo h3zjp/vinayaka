@@ -55,7 +55,6 @@ cron_binaries = \
 	vinayaka-user-speed-cron \
 	vinayaka-store-raw-toots-cron \
 	vinayaka-collect-raw-toots-cron \
-	vinayaka-user-new-cron \
 	vinayaka-prefetch-cron \
 	vinayaka-prefetch-influencers-cron
 
