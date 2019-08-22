@@ -377,6 +377,8 @@ int main (int argc, char **argv)
 	map <User, map <string, double>> speaker_to_intersection;
 	map <User, Profile> users_to_profile;
 
+	set <socialnet::HostNameAndUserName> friends;
+
 	if (4 <= toots.size ()) {
 		/* Sorry to this long long scope. */
 	
@@ -455,6 +457,9 @@ int main (int argc, char **argv)
 
 		cerr << "stable_sort" << endl;
 		stable_sort (speakers_and_similarity.begin (), speakers_and_similarity.end (), by_similarity_desc);
+
+		cerr << "get_friends_no_exception" << endl;
+		friends = socialnet_user->get_friends_no_exception ();
 	} else {
 		/* toots.size () < 4 */
 		
@@ -483,9 +488,6 @@ int main (int argc, char **argv)
 			users_to_profile.insert (pair <User, Profile> {speaker, profile});
 		}
 	}
-
-	cerr << "get_friends_no_exception" << endl;
-	set <socialnet::HostNameAndUserName> friends {};
 
 	cerr << "format_result" << endl;
 	string result = format_result
