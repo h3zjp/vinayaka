@@ -90,7 +90,7 @@ impls = $(impl_binaries) $(impl_scripts)
 
 etcs = 
 
-loading_libraries = -lsocialnet-1 -lcurl -ltinyxml2 -lcrypto++ -llanguagemodel-1
+loading_libraries = -lsocialnet-1 -lcurl -lcrypto++ -llanguagemodel-1
 
 .SUFFIXES: .cpp .o
 

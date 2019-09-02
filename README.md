@@ -40,8 +40,8 @@ https://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (Full)
 
 ## Depends on
 
-* https://gitlab.com/distsn/libsocialnet  
-* https://gitlab.com/distsn/liblanguagemodel  
+* https://gitlab.com/distsn/libsocialnet
+* https://gitlab.com/distsn/liblanguagemodel
 
 ### Optional
 
@@ -53,8 +53,8 @@ https://vinayaka.distsn.org/cgi-bin/vinayaka-user-speed-api.cgi (Full)
 
 Optional dependency: 
 
-    $ sudo apt install build-essential libcurl4-openssl-dev libtinyxml2-dev libcrypto++-dev apache2
-    # cd src
+    $ sudo apt install build-essential libcurl4-openssl-dev libcrypto++-dev apache2
+    $ cd src
     $ make clean
     $ make
     $ sudo make install
