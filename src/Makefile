@@ -73,7 +73,10 @@ binaries = $(cgi_binaries) $(cron_binaries) $(impl_binaries)
 cgi_scripts = \
 	vinayaka-user-match-api.cgi \
 	vinayaka-user-match-osa-api.cgi \
-	vinayaka-user-profiles-api.cgi
+	vinayaka-user-profiles-api.cgi \
+	vinayaka-suggestions-api.cgi \
+	vinayaka-user-match-suggestions-api.cgi \
+	vinayaka-user-new-suggestions-api.cgi
 
 cron_scripts = \
 	vinayaka-clear-cache-cron \
