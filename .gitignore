@@ -44,8 +44,8 @@ vinayaka-user-new-cron
 vinayaka-user-profile-record-cron
 vinayaka-user-search-api.cgi
 vinayaka-user-match-filtered-api.cgi
-vinayaka-user-match-suggestions-api.cgi
-vinayaka-user-new-suggestions-api.cgi
+vinayaka-suggestions-vocabulary-api.cgi
+vinayaka-suggestions-newcomers-api.cgi
 vinayaka-user-match-misskey-api.cgi
 vinayaka-prefetch-cron
 vinayaka-prefetch-influencers-cron
