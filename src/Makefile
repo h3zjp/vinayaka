@@ -46,8 +46,8 @@ cgi_binaries = \
 	vinayaka-user-speed-api.cgi \
 	vinayaka-user-search-api.cgi \
 	vinayaka-user-match-filtered-api.cgi \
-	vinayaka-user-match-suggestions-api.cgi \
-	vinayaka-user-new-suggestions-api.cgi \
+	vinayaka-suggestions-vocabulary-api.cgi \
+	vinayaka-suggestions-newcomers-api.cgi \
 	vinayaka-user-match-misskey-api.cgi
 
 cron_binaries = \
@@ -111,7 +111,7 @@ vinayaka-user-match-cache-fetcher-osa: distsn.o cache-fetcher-osa.o
 vinayaka-user-match-filtered-api.cgi: distsn.o cache-fetcher-filtered.o
 	$(CXX) distsn.o cache-fetcher-filtered.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-user-match-suggestions-api.cgi: distsn.o cache-fetcher-suggestions.o
+vinayaka-suggestions-vocabulary-api.cgi: distsn.o cache-fetcher-suggestions.o
 	$(CXX) distsn.o cache-fetcher-suggestions.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-speed-cron: distsn.o user-speed-cron.o
@@ -129,7 +129,7 @@ vinayaka-collect-raw-toots-cron: distsn.o sort-user-speed.o blacklist.o collect-
 vinayaka-user-search-api.cgi: distsn.o sort-user-speed.o blacklist.o user-search-api.o
 	$(CXX) distsn.o sort-user-speed.o blacklist.o user-search-api.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-user-new-suggestions-api.cgi: distsn.o sort-user-speed.o blacklist.o user-new-suggestions-api.o
+vinayaka-suggestions-newcomers-api.cgi: distsn.o sort-user-speed.o blacklist.o user-new-suggestions-api.o
 	$(CXX) distsn.o sort-user-speed.o blacklist.o user-new-suggestions-api.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-match-misskey-api.cgi: distsn.o cache-fetcher-misskey.o
