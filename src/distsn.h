@@ -125,6 +125,18 @@ public:
 };
 
 
+class Optout {
+public:
+	std::map <User, std::string> users_to_bio;
+public:
+	Optout ();
+	bool operator () (std::string host_name, std::string user_name) const;
+	bool operator () (
+		std::string bio
+	) const;
+};
+
+
 std::string escape_json (std::string in);
 std::vector <std::string> get_words_from_toots
 	(std::vector <std::string> toots,
@@ -148,9 +160,6 @@ std::map <User, Profile> read_profiles ();
 bool safe_url (std::string url);
 void add_to_cache (std::string host, std::string user, std::string result);
 std::string fetch_cache (std::string a_host, std::string a_user, bool & a_hit);
-
-std::set <User> get_optouted_users ();
-bool optouted (std::string bio);
 
 bool described (std::string screen_name, std::string bio, std::string avatar);
 bool good_for_suggestion (const picojson::object a_user_object, std::string a_listener_host_name);

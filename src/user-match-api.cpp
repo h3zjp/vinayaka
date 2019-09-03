@@ -324,8 +324,9 @@ int main (int argc, char **argv)
 	cerr << user << "@" << host << endl;
 
 	cerr << "get_optouted_users" << endl;
-	set <User> optouted_users = get_optouted_users ();
-	if (optouted_users.find (User {host, user}) != optouted_users.end ()) {
+	Optout optout;
+
+	if (optout (host, user)) {
 		cerr << "optouted." << endl;
 
 		vector <UserAndSimilarity> dummy_speakers_and_similarity;

@@ -39,6 +39,7 @@ objects = \
 	prefetch.o \
 	prefetch-influencers.o \
 	blacklist.o \
+	optout.o \
 	test-blacklist.o \
 	test-optout.o
 
@@ -99,11 +100,11 @@ loading_libraries = -lsocialnet-1 -lcurl -lcrypto++ -llanguagemodel-1
 
 all: $(binaries)
 
-vinayaka-user-match-impl: distsn.o user-match-api.o sort-user-speed.o blacklist.o
-	$(CXX) distsn.o user-match-api.o sort-user-speed.o blacklist.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-user-match-impl: distsn.o user-match-api.o sort-user-speed.o blacklist.o optout.o
+	$(CXX) distsn.o user-match-api.o sort-user-speed.o blacklist.o optout.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-user-avatar-cron: distsn.o user-avatar-cron.o sort-user-speed.o blacklist.o
-	$(CXX) distsn.o user-avatar-cron.o sort-user-speed.o blacklist.o $(loading_libraries)  $(CFLAGS) -o $@
+vinayaka-user-avatar-cron: distsn.o user-avatar-cron.o sort-user-speed.o blacklist.o optout.o
+	$(CXX) distsn.o user-avatar-cron.o sort-user-speed.o blacklist.o optout.o $(loading_libraries)  $(CFLAGS) -o $@
 
 vinayaka-user-match-cache-fetcher: distsn.o cache-fetcher.o
 	$(CXX) distsn.o cache-fetcher.o $(loading_libraries) $(CFLAGS) -o $@
@@ -120,35 +121,35 @@ vinayaka-suggestions-vocabulary-api.cgi: distsn.o cache-fetcher-suggestions.o
 vinayaka-user-speed-cron: distsn.o user-speed-cron.o
 	$(CXX) distsn.o user-speed-cron.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-user-speed-api.cgi: distsn.o sort-user-speed.o blacklist.o user-speed-api.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o user-speed-api.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-user-speed-api.cgi: distsn.o sort-user-speed.o blacklist.o optout.o user-speed-api.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o optout.o user-speed-api.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-store-raw-toots-cron: distsn.o sort-user-speed.o blacklist.o store-raw-toots.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o store-raw-toots.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-store-raw-toots-cron: distsn.o sort-user-speed.o blacklist.o optout.o store-raw-toots.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o optout.o store-raw-toots.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-collect-raw-toots-cron: distsn.o sort-user-speed.o blacklist.o collect-raw-toots.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o collect-raw-toots.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-collect-raw-toots-cron: distsn.o sort-user-speed.o blacklist.o optout.o collect-raw-toots.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o optout.o collect-raw-toots.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-user-search-api.cgi: distsn.o sort-user-speed.o blacklist.o user-search-api.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o user-search-api.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-user-search-api.cgi: distsn.o sort-user-speed.o blacklist.o optout.o user-search-api.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o optout.o user-search-api.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-suggestions-newcomers-api.cgi: distsn.o sort-user-speed.o blacklist.o user-new-suggestions-api.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o user-new-suggestions-api.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-suggestions-newcomers-api.cgi: distsn.o sort-user-speed.o blacklist.o optout.o user-new-suggestions-api.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o optout.o user-new-suggestions-api.o $(loading_libraries) $(CFLAGS) -o $@
 
 vinayaka-user-match-misskey-api.cgi: distsn.o cache-fetcher-misskey.o
 	$(CXX) distsn.o cache-fetcher-misskey.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-prefetch-cron: distsn.o sort-user-speed.o blacklist.o prefetch.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o prefetch.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-prefetch-cron: distsn.o sort-user-speed.o blacklist.o optout.o prefetch.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o optout.o prefetch.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-prefetch-influencers-cron: distsn.o sort-user-speed.o blacklist.o prefetch-influencers.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o prefetch-influencers.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-prefetch-influencers-cron: distsn.o sort-user-speed.o blacklist.o optout.o prefetch-influencers.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o optout.o prefetch-influencers.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-test-blacklist: distsn.o sort-user-speed.o blacklist.o test-blacklist.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o test-blacklist.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-test-blacklist: distsn.o sort-user-speed.o blacklist.o optout.o test-blacklist.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o optout.o test-blacklist.o $(loading_libraries) $(CFLAGS) -o $@
 
-vinayaka-test-optout: distsn.o sort-user-speed.o blacklist.o test-optout.o
-	$(CXX) distsn.o sort-user-speed.o blacklist.o test-optout.o $(loading_libraries) $(CFLAGS) -o $@
+vinayaka-test-optout: distsn.o sort-user-speed.o blacklist.o optout.o test-optout.o
+	$(CXX) distsn.o sort-user-speed.o blacklist.o optout.o test-optout.o $(loading_libraries) $(CFLAGS) -o $@
 
 install: $(cgis)
 	$(INSTALL_PROGRAM) $(cgis) --target-directory=$(cgidir)
