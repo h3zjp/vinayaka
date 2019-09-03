@@ -35,14 +35,9 @@ static string get_lightweight_api (string in, string listener_host, string liste
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following_bool = user_object.at (string {"following"}).get <bool> ();
-		bool local = (host == listener_host);
-		string type = user_object.at (string {"type"}).get <string> ();
-		bool bot = (type == string {"Service"});
 		string url = user_object.at (string {"url"}).get <string> ();
-		bool optout = (host == string {"3.distsn.org"} && user == string {"optout"});
 
-		if (optout || ((! local) && (! following_bool) && (! bot))) {
+		if (good_for_suggestion (user_object, listener_host)) {
 			stringstream out;
 			out
 				<< "{"

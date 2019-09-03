@@ -37,14 +37,10 @@ static string get_filtered_api (string in, string listener_host, string listener
 		string screen_name = user_object.at (string {"screen_name"}).get <string> ();
 		string bio = user_object.at (string {"bio"}).get <string> ();
 		string avatar = user_object.at (string {"avatar"}).get <string> ();
-		bool following_bool = user_object.at (string {"following"}).get <bool> ();
-		bool local = (host == listener_host);
 		string type = user_object.at (string {"type"}).get <string> ();
-		bool bot = (type == string {"Service"});
 		string url = user_object.at (string {"url"}).get <string> ();
-		bool optout = (host == string {"3.distsn.org"} && user == string {"optout"});
 
-		if (optout || ((! local) && (! following_bool) && (! bot))) {
+		if (good_for_suggestion (user_object, listener_host)) {
 			vector <string> intersection_vector;
 			map <string, double> intersection_map;
 			auto intersection_array = user_object.at (string {"intersection"}).get <picojson::array> ();
@@ -85,7 +81,7 @@ static string get_filtered_api (string in, string listener_host, string listener
 			out_user
 				<< "],";
 			out_user
-				<< "\"following\":" << (following_bool? "true": "false")
+				<< "\"following\":false"
 				<< "}";
 			filtered_formats.push_back (out_user.str ());
 		}

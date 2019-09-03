@@ -510,6 +510,22 @@ bool described (std::string screen_name, std::string bio, std::string avatar)
 }
 
 
+bool good_for_suggestion (
+	const picojson::object a_user_object, std::string a_listener_host_name)
+{
+	string host = a_user_object.at (string {"host"}).get <string> ();
+	string user = a_user_object.at (string {"user"}).get <string> ();
+	bool following_bool = a_user_object.at (string {"following"}).get <bool> ();
+	string type = a_user_object.at (string {"type"}).get <string> ();
+
+	bool local = (host == a_listener_host_name);
+	bool bot = (type == string {"Service"} || type == string {"Application"});
+	bool optout = (host == string {"3.distsn.org"} && user == string {"optout"});
+
+	return optout || ((! local) && (! following_bool) && (! bot));
+}
+
+
 FileLock::FileLock (string a_path, int operation)
 {
 	path = a_path;

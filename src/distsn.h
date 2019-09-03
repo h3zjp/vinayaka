@@ -153,6 +153,7 @@ std::set <User> get_optouted_users ();
 bool optouted (std::string bio);
 
 bool described (std::string screen_name, std::string bio, std::string avatar);
+bool good_for_suggestion (const picojson::object a_user_object, std::string a_listener_host_name);
 
 /* sort-user-speed.cpp */
 std::vector <UserAndSpeed> get_users_and_speed ();
