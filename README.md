@@ -18,8 +18,14 @@ http://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-filtered-api.cgi?mastodon
 https://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-osa-api.cgi?mastodon.social+Gargron  
 ([おすすめフォロワー](https://followlink.osa-p.net/recommend.html) compatible)
 
+https://vinayaka.distsn.org/cgi-bin/vinayaka-suggestions-api.cgi?mastodon.social+Gargron  
+(Mastodon's `/api/v1/suggestions` compatible, Recommended)
+
+https://vinayaka.distsn.org/cgi-bin/vinayaka-suggestions-vocabulary-api.cgi?mastodon.social+Gargron  
+(Mastodon's `/api/v1/suggestions` compatible, Alternative)
+
 https://vinayaka.distsn.org/cgi-bin/vinayaka-user-match-suggestions-api.cgi?mastodon.social+Gargron  
-(Mastodon's `/api/v1/suggestions` compatible)
+(Mastodon's `/api/v1/suggestions` compatible, Obsolete)
 
 ### Search
 
@@ -29,8 +35,11 @@ https://vinayaka.distsn.org/cgi-bin/vinayaka-user-search-api.cgi?nagiept
 
 <del>https://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-api.cgi</del><ins>Obsolute, see https://gitlab.com/distsn/newcomers</ins>
 
-https://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-suggestions-api.cgi  
+https://vinayaka.distsn.org/cgi-bin/vinayaka-suggestions-newcomers-api.cgi  
 (Mastodon's `/api/v1/suggestions` compatible)
+
+https://vinayaka.distsn.org/cgi-bin/vinayaka-user-new-suggestions-api.cgi  
+(Mastodon's `/api/v1/suggestions` compatible, Obsolete)
 
 ### Active users
 
