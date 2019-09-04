@@ -323,32 +323,6 @@ int main (int argc, char **argv)
 
 	cerr << user << "@" << host << endl;
 
-	cerr << "get_optouted_users" << endl;
-	Optout optout;
-
-	if (optout (host, user)) {
-		cerr << "optouted." << endl;
-
-		vector <UserAndSimilarity> dummy_speakers_and_similarity;
-		for (unsigned int cn = 0; cn < 3; cn ++) {
-			dummy_speakers_and_similarity.push_back
-				(UserAndSimilarity {"3.distsn.org", "optout", 0.0});
-		}
-
-		map <User, map <string, double>> dummy_speaker_to_intersection;
-		set <socialnet::HostNameAndUserName> dummy_friends;
-		map <User, Profile> dummy_users_to_profile;
-
-		string result = format_result
-			(dummy_speakers_and_similarity,
-			dummy_speaker_to_intersection,
-			dummy_users_to_profile,
-			dummy_friends);
-	
-		add_to_cache (host, user, result);
-		return 0;
-	}
-
 	auto http = make_shared <socialnet::Http> ();
 	http->user_agent = user_agent;
 	auto socialnet_user = socialnet::make_user (host, user, http);
@@ -370,6 +344,32 @@ int main (int argc, char **argv)
 		explicitly_discoverable,
 		implicitly_discoverable
 	);
+
+	cerr << "get_optouted_users" << endl;
+	Optout optout;
+
+	if (optout (bio, implicitly_discoverable)) {
+		cerr << "optouted." << endl;
+
+		vector <UserAndSimilarity> dummy_speakers_and_similarity;
+		for (unsigned int cn = 0; cn < 3; cn ++) {
+			dummy_speakers_and_similarity.push_back
+				(UserAndSimilarity {"3.distsn.org", "optout", 0.0});
+		}
+
+		map <User, map <string, double>> dummy_speaker_to_intersection;
+		set <socialnet::HostNameAndUserName> dummy_friends;
+		map <User, Profile> dummy_users_to_profile;
+
+		string result = format_result
+			(dummy_speakers_and_similarity,
+			dummy_speaker_to_intersection,
+			dummy_users_to_profile,
+			dummy_friends);
+	
+		add_to_cache (host, user, result);
+		return 0;
+	}
 
 	vector <string> toots;
 	if (! screen_name.empty ()) {
