@@ -71,7 +71,18 @@ static void get_and_save_toots (vector <User> users)
 			string bio;
 			string avatar;
 			string type;
-			socialnet_user->get_profile (screen_name, bio, avatar, type);
+			string activitypub_id;
+			bool explicitly_discoverable;
+			bool implicitly_discoverable;
+			socialnet_user->get_profile (
+				screen_name,
+				bio,
+				avatar,
+				type,
+				activitypub_id,
+				explicitly_discoverable,
+				implicitly_discoverable
+			);
 
 			unsigned int page = 1;
 			auto socialnet_statuses =socialnet_user->get_timeline (page);

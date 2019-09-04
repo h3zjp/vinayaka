@@ -319,6 +319,14 @@ map <User, Profile> read_profiles ()
 			number_of_followers = static_cast <unsigned int> (number_of_followers_double);
 		}
 		
+		bool explicitly_discoverable = false;
+		if (user_object.find (string {"explicitly_discoverable"}) != user_object.end ()) {
+			explicitly_discoverable = user_object.at (string {"explicitly_discoverable"}).get <bool> ();
+		}
+		bool implicitly_discoverable = true;
+		if (user_object.find (string {"implicitly_discoverable"}) != user_object.end ()) {
+			implicitly_discoverable = user_object.at (string {"implicitly_discoverable"}).get <bool> ();
+		}
 		
 		Profile profile;
 		profile.screen_name = screen_name;
@@ -329,6 +337,8 @@ map <User, Profile> read_profiles ()
 		profile.implementation = implementation;
 		profile.activitypub_id = activitypub_id;
 		profile.number_of_followers = number_of_followers;
+		profile.explicitly_discoverable = explicitly_discoverable;
+		profile.implicitly_discoverable = implicitly_discoverable;
 		users_to_profile.insert (pair <User, Profile> {User {host, user}, profile});
 	}
 	return users_to_profile;

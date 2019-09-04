@@ -357,8 +357,19 @@ int main (int argc, char **argv)
 	string bio;
 	string avatar;
 	string type;
+	string activitypub_id;
+	bool explicitly_discoverable = false;
+	bool implicitly_discoverable = true;
 	cerr << "get_profile" << endl;
-	socialnet_user->get_profile (screen_name, bio, avatar, type);
+	socialnet_user->get_profile (
+		screen_name,
+		bio,
+		avatar,
+		type,
+		activitypub_id,
+		explicitly_discoverable,
+		implicitly_discoverable
+	);
 
 	vector <string> toots;
 	if (! screen_name.empty ()) {

@@ -53,7 +53,9 @@ static void write_to_storage (vector <pair <User, Profile>> users_and_profiles, 
 			<< "\"url\":\"" << escape_json (profile.url) << "\","
 			<< "\"implementation\":\"" << socialnet::format (profile.implementation) << "\","
 			<< "\"activitypub_id\":\"" << escape_json (profile.activitypub_id) << "\","
-			<< "\"number_of_followers\":" << profile.number_of_followers
+			<< "\"number_of_followers\":" << profile.number_of_followers << ","
+			<< "\"explicitly_discoverable\":" << (profile.explicitly_discoverable? "true": "false") << ","
+			<< "\"implicitly_discoverable\":" << (profile.implicitly_discoverable? "true": "false")
 			<< "}";
 	}
 	out << "]";
@@ -81,6 +83,8 @@ int main (int argc, char **argv)
 		auto implementation = socialnet::eImplementation::UNKNOWN;
 		string activitypub_id = user.user;
 		unsigned int number_of_followers = 0;
+		bool explicitly_discoverable = false;
+		bool implicitly_discoverable = true;
 		
 		cerr << cn << " " << user.host << " " << user.user << endl;
 
@@ -91,7 +95,15 @@ int main (int argc, char **argv)
 			}
 			url = socialnet_user->url ();
 			implementation = socialnet_user->host->implementation ();
-			socialnet_user->get_profile (screen_name, bio, avatar, type, activitypub_id);
+			socialnet_user->get_profile (
+				screen_name,
+				bio,
+				avatar,
+				type,
+				activitypub_id,
+				explicitly_discoverable,
+				implicitly_discoverable
+			);
 			number_of_followers = socialnet_user->get_number_of_followers ();
 		} catch (socialnet::ExceptionWithLineNumber e) {
 			cerr << "Error " << e.line << endl;
@@ -108,6 +120,8 @@ int main (int argc, char **argv)
 		profile.implementation = implementation;
 		profile.activitypub_id = activitypub_id;
 		profile.number_of_followers = number_of_followers;
+		profile.explicitly_discoverable = explicitly_discoverable;
+		profile.implicitly_discoverable = implicitly_discoverable;
 		users_and_profiles.push_back (pair <User, Profile> {user, profile});
 	};
 	string filename {"/var/lib/vinayaka/user-profiles.json"};

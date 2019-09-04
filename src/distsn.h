@@ -95,6 +95,8 @@ public:
 	socialnet::eImplementation implementation;
 	std::string activitypub_id;
 	unsigned int number_of_followers;
+	bool explicitly_discoverable;
+	bool implicitly_discoverable;
 };
 
 
