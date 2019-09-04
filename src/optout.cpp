@@ -10,9 +10,15 @@ Optout::Optout ()
 	for (auto i: profiles) {
 		User user = i.first;
 		Profile profile = i.second;
+
 		string bio = profile.bio;
 		if (users_to_bio.find (user) == users_to_bio.end ()) {
 			users_to_bio.insert (pair <User, string> {user, bio});
+		}
+
+		bool implicitly_discoverable = profile.implicitly_discoverable;
+		if (users_to_implicitly_discoverable.find (user) == users_to_implicitly_discoverable.end ()) {
+			users_to_implicitly_discoverable.insert (pair <User, bool> {user, implicitly_discoverable});
 		}
 	}
 }
@@ -21,12 +27,18 @@ Optout::Optout ()
 bool Optout::operator () (string a_host_name, string a_user_name) const
 {
 	User user {a_host_name, a_user_name};
+
 	string bio;
 	if (users_to_bio.find (user) != users_to_bio.end ()) {
 		bio = users_to_bio.at (user);
 	}
 
-	return (* this) (bio);
+	bool implicitly_discoverable = true;
+	if (users_to_implicitly_discoverable.find (user) != users_to_implicitly_discoverable.end ()) {
+		implicitly_discoverable = users_to_implicitly_discoverable.at (user);
+	}
+
+	return (* this) (bio, implicitly_discoverable);
 }
 
 
@@ -48,8 +60,12 @@ static string mastodon_hashtag_in_bio (string x) {
 }
 
 
-bool Optout::operator () (string bio) const
+bool Optout::operator () (string bio, bool implicitly_discoverable) const
 {
+	if (! implicitly_discoverable) {
+		return true;
+	}
+
 	set <string> optout_codes {
 		string {"㊙️"},
 		string {"#rejectsearchengine"},

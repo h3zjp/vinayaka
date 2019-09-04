@@ -130,11 +130,13 @@ public:
 class Optout {
 public:
 	std::map <User, std::string> users_to_bio;
+	std::map <User, bool> users_to_implicitly_discoverable;
 public:
 	Optout ();
 	bool operator () (std::string host_name, std::string user_name) const;
 	bool operator () (
-		std::string bio
+		std::string bio,
+		bool implicitly_discoverable
 	) const;
 };
 
