@@ -71,6 +71,9 @@ int main (int argc, char **argv)
 
 	auto http = make_shared <socialnet::Http> ();
 	http->user_agent = user_agent;
+
+	socialnet::HostPool host_pool;
+	host_pool.http = http;
 	
 	unsigned int cn = 0;
 
@@ -89,7 +92,7 @@ int main (int argc, char **argv)
 		cerr << cn << " " << user.host << " " << user.user << endl;
 
 		try {
-			auto socialnet_user = socialnet::make_user (user.host, user.user, http);
+			auto socialnet_user = host_pool.make_user (user.host, user.user);
 			if (! socialnet_user) {
 				throw (socialnet::UserException {__LINE__});
 			}
