@@ -56,13 +56,16 @@ static void get_and_save_toots (vector <User> users)
 	auto http = make_shared <socialnet::Http> ();
 	http->user_agent = user_agent;
 
+	socialnet::HostPool host_pool;
+	host_pool.http = http;
+
 	vector <pair <User, vector <string>>> users_and_toots;
 
 	for (auto user: users) {
 		try {
 			cerr << user.user << "@" << user.host << endl;
 			
-			auto socialnet_user = socialnet::make_user (user.host, user.user, http);
+			auto socialnet_user = host_pool.make_user (user.host, user.user);
 			if (! socialnet_user) {
 				throw (socialnet::UserException {__LINE__});
 			}
