@@ -74,14 +74,13 @@ Optional dependency:
 Write following code in crontab:
 
 ```
- 6 */4 * * * /usr/local/bin/vinayaka-user-speed-cron
-12 */4 * * * /usr/local/bin/vinayaka-user-new-cron
-18 5   * * * /usr/local/bin/vinayaka-user-avatar-cron
-24 *   * * * /usr/local/bin/vinayaka-clear-cache-cron
-30 */6 * * * /usr/local/bin/vinayaka-collect-raw-toots-cron
-36 */6 * * * /usr/local/bin/vinayaka-store-raw-toots-cron
-42 */8 * * * /usr/local/bin/vinayaka-prefetch-cron
-48 */8 * * * /usr/local/bin/vinayaka-prefetch-influencers-cron
+ 6 */4  * * * /usr/local/bin/vinayaka-user-speed-cron
+18 4,16 * * * /usr/local/bin/vinayaka-user-avatar-cron
+24 *    * * * /usr/local/bin/vinayaka-clear-cache-cron
+30 */6  * * * /usr/local/bin/vinayaka-collect-raw-toots-cron
+36 */6  * * * /usr/local/bin/vinayaka-store-raw-toots-cron
+42 */8  * * * /usr/local/bin/vinayaka-prefetch-cron
+48 */8  * * * /usr/local/bin/vinayaka-prefetch-influencers-cron
 ```
 
 Write following code in crontab for the root:
