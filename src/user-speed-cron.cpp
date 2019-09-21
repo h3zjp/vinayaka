@@ -155,7 +155,7 @@ int main (int argc, char **argv)
 		} catch (socialnet::HostException &e) {
 			cerr << "socialnet::HostException" << " " << e.line << endl;
 		} catch (exception &e) {
-			cerr << "std::exception" << e.what () << endl;
+			cerr << "std::exception" << " " << e.what () << endl;
 		}
 	}
 
