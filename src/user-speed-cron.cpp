@@ -150,10 +150,12 @@ int main (int argc, char **argv)
 		cerr << host->host_name << endl;
 		try {
 			for_host (host);
-		} catch (socialnet::HttpException e) {
+		} catch (socialnet::HttpException &e) {
 			cerr << "socialnet::HttpException" << " " << e.line << endl;
-		} catch (socialnet::HostException e) {
+		} catch (socialnet::HostException &e) {
 			cerr << "socialnet::HostException" << " " << e.line << endl;
+		} catch (exception &e) {
+			cerr << "std::exception" << e.what () << endl;
 		}
 	}
 
